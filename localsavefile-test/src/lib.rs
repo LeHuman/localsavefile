@@ -1,5 +1,5 @@
 #![cfg(test)]
-use localsavefile::*;
+use localsavefile::{localsavefile, LocalSaveFile, LocalSaveFileCommon, LocalSaveFilePersistent};
 use tracing::{debug, Level};
 use tracing_subscriber::FmtSubscriber;
 
