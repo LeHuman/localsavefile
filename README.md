@@ -2,7 +2,7 @@
 <!-- TITLE: localsavefile -->
 <!-- KEYWORDS: library  -->
 <!-- LANGUAGES: Rust -->
-<!-- STATUS: Work In Progress -->
+<!-- STATUS: Semi-Active -->
 
 # LocalSaveFile
 
@@ -14,7 +14,7 @@
 
 ## Status
 
-**`Work In progress`**
+**`Semi-Active`**
 
 ## About
 <!-- DESCRIPTION START -->
