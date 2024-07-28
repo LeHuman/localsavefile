@@ -12,5 +12,5 @@ license = "MIT OR Apache-2.0"
 [dependencies]
 directories = "5.0.1"
 tracing = "0.1.40"
-localsavefile-derive = { path = "../localsavefile-derive" }
 savefile = { version = "0.17.6", features = ["compression", "derive", "serde"] }
+localsavefile-derive = { version = "0.1.0", path = "../localsavefile-derive" }
