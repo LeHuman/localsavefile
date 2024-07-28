@@ -1,0 +1,16 @@
+[package]
+name = "localsavefile"
+authors = ["LeHuman"]
+version = "0.1.0"
+edition = "2021"
+description = "Save and load structs from a local file. A convenience wrapper around the savefile crate."
+repository = "https://github.com/lehuman/localsavefile"
+license = "MIT OR Apache-2.0"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+directories = "5.0.1"
+tracing = "0.1.40"
+localsavefile-derive = { path = "../localsavefile-derive" }
+savefile = { version = "0.17.6", features = ["compression", "derive", "serde"] }

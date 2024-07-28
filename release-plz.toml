@@ -1,0 +1,13 @@
+[workspace]
+#git_release_enable = false
+
+[[package]]
+name = "localsavefile"
+publish = true
+release = true
+
+
+[[package]]
+name = "localsavefile-derive"
+publish = true
+release = true
