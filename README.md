@@ -37,12 +37,16 @@ I have been making a few toy program's in rust and kept finding a need to have s
 ### Requirements
 
 - [Rust](https://www.rust-lang.org/) == 2021
+- [savefile](https://github.com/avl/savefile) >= 0.17.6
 
 ### Cargo
 
 ```sh
-cargo add localsavefile
+cargo add localsavefile savefile
 ```
+
+> [!NOTE]
+> [savefile](https://github.com/avl/savefile) also needs to be added with cargo to be used by the macro.
 
 ### Minimal Example
 
