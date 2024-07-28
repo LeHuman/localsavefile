@@ -10,7 +10,7 @@ pub use crate::localsavefile::LocalSaveFile;
 pub use crate::localsavefilecommon::LocalSaveFileCommon;
 pub use crate::localsavefilepersistent::LocalSaveFilePersistent;
 pub use localsavefile_derive::localsavefile;
-pub use sanitize_filename;
+pub use sanitize_filename::sanitize;
 
 #[derive(Default, SavefileNoIntrospect, Debug)]
 pub struct LocalSaveFileMetaData {

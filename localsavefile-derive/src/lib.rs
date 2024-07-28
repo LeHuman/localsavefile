@@ -26,7 +26,7 @@ fn impl_default(
 
         #impl_common
 
-        impl LocalSaveFile for #name {}
+        impl ::localsavefile::LocalSaveFile for #name {}
     }
     .into()
 }
@@ -44,7 +44,7 @@ fn impl_persistent(
             let additional_field = quote! {
                 #[savefile_ignore]
                 #[savefile_introspect_ignore]
-                __place_localsavefile_above_any_derives: LocalSaveFileMetaData,
+                __place_localsavefile_above_any_derives: ::localsavefile::LocalSaveFileMetaData,
             };
 
             let new_fields = match fields {
@@ -87,7 +87,7 @@ fn impl_persistent(
 
                 #impl_common
 
-                impl LocalSaveFilePersistent for #name {
+                impl ::localsavefile::LocalSaveFilePersistent for #name {
                     fn get_file_handle_mut(&mut self) -> &mut Option<std::fs::File> {
                         &mut self.__place_localsavefile_above_any_derives.file
                     }
@@ -139,12 +139,12 @@ pub fn localsavefile(args: TokenStream, input: TokenStream) -> TokenStream {
             let mut s = module_path!().replace("::", ".") + "." + #name_str;
             s.make_ascii_lowercase();
             s.retain(|c| !c.is_whitespace());
-            ::sanitize_filename::sanitize(s)
+            ::localsavefile::sanitize(s)
         }
     };
 
     let impl_common = quote! {
-        impl LocalSaveFileCommon for #name {
+        impl ::localsavefile::LocalSaveFileCommon for #name {
             fn get_version() -> u32 {
                 #version
             }
@@ -157,14 +157,14 @@ pub fn localsavefile(args: TokenStream, input: TokenStream) -> TokenStream {
                 let mut s = env!("CARGO_PKG_NAME").to_string();
                 s.make_ascii_lowercase();
                 s.retain(|c| !c.is_whitespace());
-                ::sanitize_filename::sanitize(s)
+                ::localsavefile::sanitize(s)
             }
 
             fn get_pkg_author() -> String {
                 let mut s = env!("CARGO_PKG_AUTHORS").split(',').collect::<Vec<&str>>()[0].to_string();
                 s.make_ascii_lowercase();
                 s.retain(|c| !c.is_whitespace());
-                ::sanitize_filename::sanitize(s)
+                ::localsavefile::sanitize(s)
             }
 
             #get_dir_path
