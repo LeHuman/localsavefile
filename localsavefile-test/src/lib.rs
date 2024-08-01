@@ -1,4 +1,5 @@
 #![cfg(test)]
+
 use localsavefile::{localsavefile, LocalSaveFile, LocalSaveFileCommon, LocalSaveFilePersistent};
 use tracing::{debug, Level};
 use tracing_subscriber::FmtSubscriber;
@@ -90,4 +91,59 @@ fn test_trait() {
     a.load().expect("Failed to load a");
     assert_eq!(b, a, "a != b");
     TestCache::remove_file().expect("Failed to remove file");
+}
+
+#[test]
+fn test_template() {
+    #[localsavefile(persist = true)]
+    #[derive(Default, PartialEq, Debug)]
+    struct MySaveT0<T>
+    where
+        T: Clone,
+    {
+        val: T,
+    }
+
+    type MySave0 = MySaveT0<u128>;
+    let mut foo = MySave0 {
+        val: 21,
+        __place_localsavefile_above_any_derives: Default::default(),
+    };
+    foo.save().unwrap();
+    let bar = MySave0::load_default();
+    let mut baz = MySave0 {
+        val: 42,
+        __place_localsavefile_above_any_derives: Default::default(),
+    };
+    baz.load().unwrap();
+    assert_eq!(foo, bar); // Should never trigger
+    MySave0::remove_file().unwrap();
+
+    #[localsavefile]
+    #[derive(Default, PartialEq, Debug)]
+    struct MySaveT1<T, D, A, C> {
+        val0: T,
+        val1: D,
+        val2: A,
+        val3: A,
+        val4: C,
+    }
+
+    type MySave1 = MySaveT1<u128, String, bool, MySave0>;
+    let foo = MySave1 {
+        val0: 16,
+        val1: String::from("heyo"),
+        val2: false,
+        val3: true,
+        val4: MySave0 {
+            val: 21,
+            __place_localsavefile_above_any_derives: Default::default(),
+        },
+    };
+    foo.save().unwrap();
+    let bar = MySave1::load_default();
+    let mut baz = MySave1::default();
+    baz.load().unwrap();
+    assert_eq!(foo, bar); // Should never trigger
+    MySave1::remove_file().unwrap();
 }
