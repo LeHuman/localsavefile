@@ -7,6 +7,8 @@ use savefile::prelude::Savefile;
 use tracing::{debug, Level};
 use tracing_subscriber::FmtSubscriber;
 
+pub mod isolate;
+
 #[test]
 fn test_trait() {
     let subscriber = FmtSubscriber::builder()
