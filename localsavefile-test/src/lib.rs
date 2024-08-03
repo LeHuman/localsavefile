@@ -1,6 +1,9 @@
 #![cfg(test)]
 
-use localsavefile::{localsavefile, LocalSaveFile, LocalSaveFileCommon, LocalSaveFilePersistent};
+use localsavefile::{
+    localsavefile, localsavefile_impl, LocalSaveFile, LocalSaveFileCommon, LocalSaveFilePersistent,
+};
+use savefile::prelude::Savefile;
 use tracing::{debug, Level};
 use tracing_subscriber::FmtSubscriber;
 
@@ -12,7 +15,6 @@ fn test_trait() {
     tracing::subscriber::set_global_default(subscriber).expect("Setting default subscriber failed");
 
     #[localsavefile]
-    #[derive(Default)]
     struct MySave {
         val: u32,
     }
@@ -27,7 +29,6 @@ fn test_trait() {
     MySave::remove_file().unwrap();
 
     #[localsavefile(persist = true)]
-    #[derive(Default)]
     struct MySavePersist {
         val: u32,
     }
@@ -46,7 +47,7 @@ fn test_trait() {
     MySavePersist::remove_file().unwrap();
 
     #[localsavefile(version = 1)]
-    #[derive(Debug, PartialEq, Default)]
+    #[derive(Debug, PartialEq)]
     struct TestCache {
         val: u32,
         #[savefile_default_val = "blank"]
@@ -54,8 +55,9 @@ fn test_trait() {
         str: String,
     }
 
-    #[localsavefile(persist = true, name = "some_savefile")]
-    #[derive(Debug, PartialEq, Default)]
+    #[derive(Debug, PartialEq)]
+    #[localsavefile_impl(persist = true, name = "some_savefile")]
+    #[derive(Savefile, Default)]
     struct TestCache2 {
         val: u32,
         str: String,
@@ -96,7 +98,7 @@ fn test_trait() {
 #[test]
 fn test_template() {
     #[localsavefile(persist = true)]
-    #[derive(Default, PartialEq, Debug)]
+    #[derive(PartialEq, Debug)]
     struct MySaveT0<T>
     where
         T: Clone,
@@ -120,7 +122,7 @@ fn test_template() {
     MySave0::remove_file().unwrap();
 
     #[localsavefile]
-    #[derive(Default, PartialEq, Debug)]
+    #[derive(PartialEq, Debug)]
     struct MySaveT1<T, D, A, C> {
         val0: T,
         val1: D,
