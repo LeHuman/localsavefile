@@ -17,16 +17,47 @@ struct LSFArgs {
     persist: Option<bool>,
 }
 
+// https://github.com/avl/savefile/blob/1cce218a9fce5ee328e6ed0c77e020e53ef8e8d5/savefile-derive/src/common.rs#L6
+fn get_extra_where_clauses(
+    gen2: &Generics,
+    where_clause: Option<&WhereClause>,
+    the_trait: TokenStream,
+) -> TokenStream {
+    let extra_where_separator;
+    if let Some(where_clause) = where_clause {
+        if where_clause.predicates.trailing_punct() {
+            extra_where_separator = quote!();
+        } else {
+            extra_where_separator = quote!(,);
+        }
+    } else {
+        extra_where_separator = quote!(where);
+    }
+    let mut where_clauses = vec![];
+    for param in gen2.params.iter() {
+        if let GenericParam::Type(t) = param {
+            let t_name = &t.ident;
+            let clause = quote! {#t_name : #the_trait};
+            where_clauses.push(clause);
+        }
+    }
+    let extra_where = quote! {
+        #extra_where_separator #(#where_clauses),*
+    };
+    extra_where
+}
+
 fn impl_default(
     input: &DeriveInput,
     generics: &ImplGenerics,
     name: &TokenStream,
     extra_where: &TokenStream,
     impl_common: &proc_macro2::TokenStream,
+    derives: &proc_macro2::TokenStream,
 ) -> proc_macro::TokenStream {
     // TODO: Add Savefile onto attrs
     quote! {
-        #[derive(::savefile::prelude::Savefile)]
+        #derives
         #input
 
         #impl_common
@@ -42,6 +73,7 @@ fn impl_persistent(
     name: &TokenStream,
     extra_where: &TokenStream,
     impl_common: &proc_macro2::TokenStream,
+    derives: &proc_macro2::TokenStream,
 ) -> proc_macro::TokenStream {
     let attrs = &input.attrs;
 
@@ -89,7 +121,7 @@ fn impl_persistent(
             // TODO: Add Savefile onto attrs
             quote! {
                 #(#struct_attrs)*
-                #[derive(::savefile::prelude::Savefile)]
+                #derives
                 struct #name #new_fields
 
                 #impl_common
@@ -106,40 +138,10 @@ fn impl_persistent(
     .into()
 }
 
-// https://github.com/avl/savefile/blob/1cce218a9fce5ee328e6ed0c77e020e53ef8e8d5/savefile-derive/src/common.rs#L6
-pub(crate) fn get_extra_where_clauses(
-    gen2: &Generics,
-    where_clause: Option<&WhereClause>,
-    the_trait: TokenStream,
-) -> TokenStream {
-    let extra_where_separator;
-    if let Some(where_clause) = where_clause {
-        if where_clause.predicates.trailing_punct() {
-            extra_where_separator = quote!();
-        } else {
-            extra_where_separator = quote!(,);
-        }
-    } else {
-        extra_where_separator = quote!(where);
-    }
-    let mut where_clauses = vec![];
-    for param in gen2.params.iter() {
-        if let GenericParam::Type(t) = param {
-            let t_name = &t.ident;
-            let clause = quote! {#t_name : #the_trait};
-            where_clauses.push(clause);
-        }
-    }
-    let extra_where = quote! {
-        #extra_where_separator #(#where_clauses),*
-    };
-    extra_where
-}
-
-#[proc_macro_attribute]
-pub fn localsavefile(
+fn localsavefile_main(
     args: proc_macro::TokenStream,
     input: proc_macro::TokenStream,
+    with_derives: bool,
 ) -> proc_macro::TokenStream {
     let input: DeriveInput = syn::parse_macro_input!(input);
     let attr_args = match NestedMeta::parse_meta_list(args.into()) {
@@ -169,6 +171,12 @@ pub fn localsavefile(
             }
         },
         None => quote! {},
+    };
+
+    let derives = if with_derives {
+        quote! {#[derive(::savefile::prelude::Savefile, ::core::default::Default)]}
+    } else {
+        quote! {}
     };
 
     let struct_name = if let Some(struct_name) = struct_name {
@@ -227,6 +235,7 @@ pub fn localsavefile(
             &for_name,
             &extra_where,
             &impl_common,
+            &derives,
         )
     } else {
         impl_default(
@@ -235,6 +244,23 @@ pub fn localsavefile(
             &for_name,
             &extra_where,
             &impl_common,
+            &derives,
         )
     }
+}
+
+#[proc_macro_attribute]
+pub fn localsavefile_impl(
+    args: proc_macro::TokenStream,
+    input: proc_macro::TokenStream,
+) -> proc_macro::TokenStream {
+    localsavefile_main(args, input, false)
+}
+
+#[proc_macro_attribute]
+pub fn localsavefile(
+    args: proc_macro::TokenStream,
+    input: proc_macro::TokenStream,
+) -> proc_macro::TokenStream {
+    localsavefile_main(args, input, true)
 }
