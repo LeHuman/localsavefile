@@ -26,6 +26,7 @@ impl PartialEq for LocalSaveFileMetaData {
 }
 impl Eq for LocalSaveFileMetaData {}
 impl PartialOrd for LocalSaveFileMetaData {
+    #[allow(clippy::non_canonical_partial_ord_impl)]
     fn partial_cmp(&self, _other: &Self) -> Option<std::cmp::Ordering> {
         Some(std::cmp::Ordering::Equal)
     }
