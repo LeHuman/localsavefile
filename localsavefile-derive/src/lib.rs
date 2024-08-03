@@ -127,8 +127,8 @@ fn impl_persistent(
                 #impl_common
 
                 impl #generics ::localsavefile::LocalSaveFilePersistent for #name #extra_where{
-                    fn get_file_handle_mut(&mut self) -> &mut Option<std::fs::File> {
-                        &mut self.__place_localsavefile_above_any_derives.file
+                    fn get_metadata_mut(&mut self) -> &mut ::localsavefile::LocalSaveFileMetaData {
+                        &mut self.__place_localsavefile_above_any_derives
                     }
                 }
             }
