@@ -46,16 +46,17 @@ cargo add localsavefile savefile
 ```
 
 > [!NOTE]
-> [savefile](https://github.com/avl/savefile) also needs to be added with cargo to be used by the macro.
+> [savefile](https://github.com/avl/savefile) also needs to be added with cargo to be used by the external macro.
 
 ### Minimal Example
 
 > [!IMPORTANT]
-> Your struct **must** derive Default, this is used when loading from disk.
+> The macros Default and Savefile are automatically set to be derived. In any case, use `localsavefile_impl` instead of `localsavefile` to manually derive them.
 
 ```rust
+use localsavefile::{localsavefile, LocalSaveFile, LocalSaveFileCommon};
+
 #[localsavefile]
-#[derive(Default)]
 struct MySave {
     val: u32,
 }
@@ -75,8 +76,9 @@ MySave::remove_file();
 If you wish to maintain the underlying file open, as in, not having to reopen it each time `save` or `load` is called, a file handler can be added to your struct through the parameter `persist = true`. This will modify your struct and add an additional field. It's usage is the same as the non-persistent version, with a few caveats as shown.
 
 ```rust
+use localsavefile::{localsavefile, LocalSaveFilePersistent, LocalSaveFileCommon};
+
 #[localsavefile(persist = true)]
-#[derive(Default)]
 struct MySavePersist {
     val: u32,
 }
@@ -98,20 +100,20 @@ MySavePersist::remove_file();
 ```
 
 > [!CAUTION]
-> Because `localsavefile(persist = true)` modifies your struct, it is important to place it before any derives, as such.
+> Because `localsavefile(persist = true)` modifies your struct, it is important to place it before any derives that must be aware of every field, such as when using `localsavefile_impl`.
 >
 > ```rust
 > // First localsavefile
-> #[localsavefile(persist = true)]
+> #[localsavefile_impl(persist = true)]
 > // Then whatever else ...
-> #[derive(Default)]
+> #[derive(Savefile, Default)]
 > struct MySave {
 >     val: u32,
 >     // HIDDEN: __place_localsavefile_above_any_derives : Option<File>
 > }
 > ```
 >
-> In this case, this ensures the added field gets processed by `Default`.
+> In this case, this ensures the added field gets processed by `Default` and `Savefile`.
 
 ### Options
 
@@ -123,7 +125,6 @@ As you can imagine, changing anything that these defaults use will sneakily chan
 
 ```rust
 #[localsavefile(name = "a_unique_name", path = "./a/valid/path")]
-#[derive(Default)]
 struct TestStruct {
     val: u32,
     str: String,
@@ -140,10 +141,9 @@ The version option takes a `u32` and is passed to the underlying [savefile](http
 
 ```rust
 #[localsavefile(version = 1)]
-#[derive(Default)]
 struct TestStruct {
     val: u32,
-    #[savefile_default_val = "blank"]
+    #[savefile_default_val = "not-blank"]
     #[savefile_versions = "0..0"]
     str: String,
 }
