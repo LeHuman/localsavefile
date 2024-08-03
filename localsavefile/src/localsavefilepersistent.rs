@@ -14,8 +14,6 @@ pub struct LocalSaveFileMetaData {
     #[savefile_ignore]
     pub file: Option<File>,
     #[savefile_ignore]
-    pub writer: Option<BufWriter<File>>,
-    #[savefile_ignore]
     pub reader: Option<BufReader<File>>,
 }
 impl core::hash::Hash for LocalSaveFileMetaData {
@@ -41,7 +39,6 @@ impl Clone for LocalSaveFileMetaData {
     fn clone(&self) -> Self {
         Self {
             file: self.file.as_ref().and_then(|file| file.try_clone().ok()),
-            writer: None,
             reader: None,
         }
     }
@@ -51,14 +48,16 @@ pub trait LocalSaveFilePersistent
 where
     Self: LocalSaveFileCommon,
 {
-    fn get_file_handle_mut(&mut self) -> &mut Option<File>;
+    fn get_metadata_mut(&mut self) -> &mut LocalSaveFileMetaData;
 
     fn close(&mut self) {
-        if self.get_file_handle_mut().is_none() {
+        if self.get_metadata_mut().file.is_none() {
             debug!("LocalSaveFile already closed");
             return;
         }
-        *self.get_file_handle_mut() = None;
+        let metadata = self.get_metadata_mut();
+        metadata.file = None;
+        metadata.reader = None;
     }
 
     // NOTE: Does not ensure path is valid/existing
@@ -66,28 +65,39 @@ where
     where
         P: AsRef<Path>,
     {
-        if self.get_file_handle_mut().is_some() {
-            debug!("LocalSaveFile already open with file");
-            return Ok(());
+        let metadata = self.get_metadata_mut();
+        let file = match &mut metadata.file {
+            Some(file) => {
+                debug!("LocalSaveFile already open with file");
+                file
+            }
+            None => {
+                metadata.file = Some(
+                    OpenOptions::new()
+                        .read(true)
+                        .write(true)
+                        .create(true)
+                        .truncate(false)
+                        .open(path)?,
+                );
+                metadata.reader = None;
+                metadata.file.as_mut().expect("Failed to get metadata file")
+            }
+        };
+
+        if metadata.reader.is_none() {
+            let reader = BufReader::new(file.try_clone()?);
+            metadata.reader = Some(reader);
         }
-        let file = OpenOptions::new()
-            .read(true)
-            .write(true)
-            .create(true)
-            .truncate(false)
-            .open(path)?;
-        *self.get_file_handle_mut() = Some(file);
+
         Ok(())
     }
 
     fn save(&mut self) -> io::Result<()> {
-        if self.get_file_handle_mut().is_none() {
-            warn!("LocalSaveFile does not have file open, using default");
-            self.open_default()?;
-        }
+        self.open_default()?;
+        let metadata = self.get_metadata_mut();
         // Clear file using existing handle
-        let file = self.get_file_handle_mut();
-        let Some(file) = file else {
+        let Some(file) = &mut metadata.file else {
             return Err(std::io::Error::other("Failed to get file handle"));
         };
         file.flush()?;
@@ -99,34 +109,34 @@ where
         let mut writer = BufWriter::new(&mut file);
 
         let result = savefile::save_compressed(&mut writer, Self::get_version(), self);
-        match result {
-            Err(err) => Err(std::io::Error::other(err)),
-            _ => Ok(()),
+        if let Err(err) = result {
+            Err(std::io::Error::other(err))
+        } else {
+            Ok(())
         }
     }
 
     fn load(&mut self) -> io::Result<()> {
-        if self.get_file_handle_mut().is_none() {
-            warn!("LocalSaveFile does not have file open, using default");
-            self.open_default()?;
-        }
-        // Get existing handle and rewind to the start of it
-        let file = self.get_file_handle_mut();
-        let Some(file) = file else {
-            return Err(std::io::Error::other("Failed to get file handle"));
+        self.open_default()?;
+
+        let metadata = self.get_metadata_mut();
+        let Some(file) = metadata.file.as_mut() else {
+            return Err(io::Error::other("Failed to get file handle"));
         };
+        file.flush()?;
         file.rewind()?;
 
-        // Create reader from cloned file handle
-        let mut file = file.try_clone()?;
-        let mut reader = BufReader::new(&mut file);
+        let Some(mut reader) = metadata.reader.as_mut() else {
+            return Err(std::io::Error::other("Failed to get reader"));
+        };
 
         let result: Result<Self, savefile::SavefileError> =
             savefile::load(&mut reader, Self::get_version());
         match result {
             Ok(res) => {
+                let metadata = metadata.clone();
                 *self = res;
-                *self.get_file_handle_mut() = Some(file);
+                *self.get_metadata_mut() = metadata;
                 Ok(())
             }
             Err(err) => Err(std::io::Error::other(err)),
@@ -142,15 +152,13 @@ where
         if def.open_default().is_err() {
             warn!("Failed to open default LocalSaveFile directory");
         }
-        let result = def.load();
-        if result.is_err() {
+        if let Err(result) = def.load() {
             debug!("{:?}", result);
             warn!(
                 "Failed to load on LocalSaveFile default, using default {:?}",
                 Self::get_struct_name()
             );
         }
-        // result.unwrap_or_default()
         def
     }
 }
