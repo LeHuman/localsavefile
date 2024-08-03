@@ -4,9 +4,48 @@ use std::{
     path::Path,
 };
 
+use savefile::prelude::SavefileNoIntrospect;
 use tracing::{debug, warn};
 
 use crate::LocalSaveFileCommon;
+
+#[derive(Default, SavefileNoIntrospect, Debug)]
+pub struct LocalSaveFileMetaData {
+    #[savefile_ignore]
+    pub file: Option<File>,
+    #[savefile_ignore]
+    pub writer: Option<BufWriter<File>>,
+    #[savefile_ignore]
+    pub reader: Option<BufReader<File>>,
+}
+impl core::hash::Hash for LocalSaveFileMetaData {
+    fn hash<H: std::hash::Hasher>(&self, _state: &mut H) {}
+}
+impl PartialEq for LocalSaveFileMetaData {
+    fn eq(&self, _other: &Self) -> bool {
+        true
+    }
+}
+impl Eq for LocalSaveFileMetaData {}
+impl PartialOrd for LocalSaveFileMetaData {
+    fn partial_cmp(&self, _other: &Self) -> Option<std::cmp::Ordering> {
+        Some(std::cmp::Ordering::Equal)
+    }
+}
+impl Ord for LocalSaveFileMetaData {
+    fn cmp(&self, _other: &Self) -> std::cmp::Ordering {
+        std::cmp::Ordering::Equal
+    }
+}
+impl Clone for LocalSaveFileMetaData {
+    fn clone(&self) -> Self {
+        Self {
+            file: self.file.as_ref().and_then(|file| file.try_clone().ok()),
+            writer: None,
+            reader: None,
+        }
+    }
+}
 
 pub trait LocalSaveFilePersistent
 where
