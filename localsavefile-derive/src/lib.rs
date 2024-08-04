@@ -211,14 +211,17 @@ fn localsavefile_main(
             }
 
             fn get_pkg_name() -> String {
-                let mut s = env!("CARGO_PKG_NAME").to_string();
+                let mut s = std::env::var("LOCAL_SAVE_FILE_CARGO_PKG_NAME")
+                .unwrap_or(env!("CARGO_PKG_NAME").to_string());
                 s.make_ascii_lowercase();
                 s.retain(|c| !c.is_whitespace());
                 ::localsavefile::sanitize(s)
             }
 
             fn get_pkg_author() -> String {
-                let mut s = env!("CARGO_PKG_AUTHORS").split(',').collect::<Vec<&str>>()[0].to_string();
+                let mut s = std::env::var("LOCAL_SAVE_FILE_CARGO_PKG_AUTHORS")
+                    .unwrap_or(env!("CARGO_PKG_AUTHORS").to_string());
+                let mut s = s.split(',').collect::<Vec<&str>>()[0].to_string();
                 s.make_ascii_lowercase();
                 s.retain(|c| !c.is_whitespace());
                 ::localsavefile::sanitize(s)
