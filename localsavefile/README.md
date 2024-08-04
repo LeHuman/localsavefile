@@ -72,6 +72,9 @@ MySave::remove_file();
 
 If you wish to maintain the underlying file open, as in, not having to reopen it each time `save` or `load` is called, a file handler can be added to your struct through the parameter `persist = true`. This will modify your struct and add an additional field. It's usage is the same as the non-persistent version, with a few caveats as shown.
 
+> [!TIP]
+> I have not done any testing as to whether there is any real benefit from holding persistent metadata. If you are unsure, just use the non-persistent version.
+
 > [!NOTE]
 > Persistent localsavefiles will store it's path upon loading or saving. This means any subsequent calls to `setlsf` will not affect it.
 
