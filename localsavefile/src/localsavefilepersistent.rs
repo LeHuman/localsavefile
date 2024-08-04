@@ -1,7 +1,7 @@
 use std::{
     fs::{File, OpenOptions},
     io::{self, BufReader, BufWriter, Seek, Write},
-    path::Path,
+    path::{Path, PathBuf},
 };
 
 use savefile::prelude::SavefileNoIntrospect;
@@ -15,6 +15,8 @@ pub struct LocalSaveFileMetaData {
     pub file: Option<File>,
     #[savefile_ignore]
     pub reader: Option<BufReader<File>>,
+    #[savefile_ignore]
+    pub path: Option<PathBuf>,
 }
 impl core::hash::Hash for LocalSaveFileMetaData {
     fn hash<H: std::hash::Hasher>(&self, _state: &mut H) {}
@@ -41,6 +43,7 @@ impl Clone for LocalSaveFileMetaData {
         Self {
             file: self.file.as_ref().and_then(|file| file.try_clone().ok()),
             reader: None,
+            path: None,
         }
     }
 }
@@ -145,7 +148,11 @@ where
     }
 
     fn open_default(&mut self) -> io::Result<()> {
-        self.open(Self::get_full_path()?)
+        let path = match &self.get_metadata_mut().path {
+            Some(p) => p.to_owned(),
+            None => Self::get_full_path()?,
+        };
+        self.open(path)
     }
 
     fn load_default() -> Self {
