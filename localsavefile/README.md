@@ -34,12 +34,12 @@ I have been making a few toy program's in rust and kept finding a need to have s
 cargo add localsavefile savefile
 ```
 
-> [!NOTE]
-> [savefile](https://github.com/avl/savefile) also needs to be added with cargo to be used by the external macro.
+> [!IMPORTANT]
+> As this is mainly a convenience wrapper, [savefile](https://github.com/avl/savefile) also needs to be added with cargo to be used by the exported macros.
 
 ### Minimal Example
 
-> [!IMPORTANT]
+> [!NOTE]
 > The macros Default and Savefile are automatically set to be derived. In any case, use `localsavefile_impl` instead of `localsavefile` to manually derive them.
 
 ```rust
@@ -60,9 +60,20 @@ assert_eq!(bar.val, foo.val); // Should never trigger
 MySave::remove_file();
 ```
 
+> [!WARNING]
+> If, for whatever reason, you implement `localsavefile` in a library, it is recommened to re-export the macro `setlsf` and have the user call this macro before anything. It will set the env variables `LOCAL_SAVE_FILE_CARGO_PKG_NAME` and `LOCAL_SAVE_FILE_CARGO_PKG_AUTHORS` to be used in place of `CARGO_PKG_NAME` and `CARGO_PKG_AUTHORS` respectively. Otherwise, the default paths will be in regards to your crate, not the user's.
+>
+> ```rust
+> // In lib.rs, probably
+> pub use localsavefile::setlsf;
+> ```
+
 ### Persistent File
 
 If you wish to maintain the underlying file open, as in, not having to reopen it each time `save` or `load` is called, a file handler can be added to your struct through the parameter `persist = true`. This will modify your struct and add an additional field. It's usage is the same as the non-persistent version, with a few caveats as shown.
+
+> [!NOTE]
+> Persistent localsavefiles will store it's path upon loading or saving. This means any subsequent calls to `setlsf` will not affect it.
 
 ```rust
 use localsavefile::{localsavefile, LocalSaveFilePersistent, LocalSaveFileCommon};
