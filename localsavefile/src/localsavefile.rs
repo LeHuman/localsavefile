@@ -44,7 +44,19 @@ where
                 Self::get_struct_name()
             );
         }
-        // result.unwrap_or_default()
+        def
+    }
+
+    fn load_file_or_default(file_path: &str) -> Self {
+        let mut def = Self::default();
+        let result = def.load_file(file_path);
+        if result.is_err() {
+            debug!("{:?}", result);
+            warn!(
+                "Failed to load on LocalSaveFile, using path {:?}",
+                file_path
+            );
+        }
         def
     }
 }

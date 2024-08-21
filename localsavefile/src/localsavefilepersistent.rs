@@ -169,4 +169,20 @@ where
         }
         def
     }
+
+    fn load_file_or_default(file_path: &str) -> Self {
+        let mut def = Self::default();
+        if def.open_default().is_err() {
+            warn!("Failed to open default LocalSaveFile directory");
+        }
+        let result = def.load_file(file_path);
+        if result.is_err() {
+            debug!("{:?}", result);
+            warn!(
+                "Failed to load on LocalSaveFile, using path {:?}",
+                file_path
+            );
+        }
+        def
+    }
 }
