@@ -57,7 +57,7 @@ let mut baz = MySave { val: 42 };
 baz.load();
 assert_eq!(foo.val, bar.val); // Should never trigger
 assert_eq!(bar.val, foo.val); // Should never trigger
-MySave::remove_file();
+MySave::remove_file(); // Removes the default file
 ```
 
 > [!WARNING]
@@ -99,7 +99,7 @@ assert_eq!(foo.val, bar.val); // Should never trigger
 foo.close();
 bar.close(); // Requires bar to be mutable
 // Close any instances before removing the file
-MySavePersist::remove_file();
+MySavePersist::remove_file(); // Removes the default file
 ```
 
 > [!CAUTION]
@@ -117,6 +117,32 @@ MySavePersist::remove_file();
 > ```
 >
 > In this case, this ensures the added field gets processed by `Default` and `Savefile`.
+
+### Passthrough Functions
+
+Internal functionality is exposed to allow for direct control over loading and saving in terms of what file to use. These paths are not saved and are immediately used for the respective operation.
+
+```rust
+use localsavefile::{localsavefile, LocalSaveFile, LocalSaveFileCommon};
+
+#[localsavefile]
+struct MySave {
+    val: u32,
+}
+
+let foo = MySave::load_file_or_default("./data.bin");
+foo.load_file("./other_data.bin");
+foo.save_file("./this_data.bin");
+
+// Replaces the default file
+MySave::replace_file("./this_data.bin");
+```
+
+> [!IMPORTANT]
+> No check is made as to whether the file directory is valid. Particularly when saving to a file.
+
+> [!NOTE]
+> `load_file_or_default`, `load_file`, and `save_file` ignore the usage of `setlsf` as paths are immediately used.
 
 ### Options
 
