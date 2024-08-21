@@ -1,7 +1,7 @@
 use std::{
     fs::{self, File},
     io::{self, BufReader, BufWriter},
-    path::{Path, PathBuf},
+    path::PathBuf,
 };
 
 use savefile::{Deserialize, Serialize};
@@ -100,5 +100,4 @@ where
         fs::copy(file_path, save_path)?;
         Ok(())
     }
-
 }
