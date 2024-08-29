@@ -64,6 +64,7 @@ jobs:
           git add CHANGELOG.md
           git commit -m "docs: :memo: Update CHANGELOG.md"
           git push origin HEAD:auto-release-${{ env.VERSION }}
+          git status
       - name: Create pull request
         run: |
           gh pr create --title "Auto Release v${{ env.VERSION }}" --body "Auto release for v${{ env.VERSION }}" --base main --head auto-release-${{ env.VERSION }}
@@ -107,7 +108,13 @@ jobs:
             echo "Checking PR checks..."
 
             # Check if any checks have failed
-            CHECK_FAILED=$(gh pr checks "${{ env.pr_number }}" --json state 2>&1 | grep FAILURE 2>&1) || true
+            set +e
+            CHECKS=$(gh pr checks "${{ env.pr_number }}" --json state) || true
+            echo "PR Check 0"
+            CHECK_FAILED=$($CHECKS | grep FAILURE) || true
+            $( exit 0 )
+            set -e
+            echo "PR Check 1"
             if [[ "$CHECK_FAILED" ]]; then
                 echo "PR checks failed. Exiting."
                 exit 1
@@ -130,7 +137,10 @@ jobs:
           git fetch --all
           git checkout main
           git pull origin main
-          git tag v${{ env.VERSION }} 2>&1 || true
+          set +e
+          git tag v${{ env.VERSION }} || true
+          $( exit 0 )
+          set -e
           git push origin tag v${{ env.VERSION }}
       - name: Cleanup branch if workflow fails
         if: failure() || always()
