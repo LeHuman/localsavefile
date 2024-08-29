@@ -110,7 +110,7 @@ jobs:
             # Check if any checks have failed
             CHECK_FAILED=$(gh pr checks "${{ env.pr_number }}" --json state | grep FAILURE) || true
             echo "PR Check"
-            if [[ "$CHECK_FAILED" != "" ]]; then;
+            if [[ "$CHECK_FAILED" != "" ]]; then
                 echo "PR checks failed. Exiting."
                 exit 1
             fi
