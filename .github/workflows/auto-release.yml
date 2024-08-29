@@ -26,7 +26,7 @@ jobs:
         uses: dtolnay/rust-toolchain@stable
       - uses: Swatinem/rust-cache@v2
       - name: Check semver # IMPROVE: Bump version appropriately
-        uses: obi1kenobi/cargo-semver-checks-action@v2
+        uses: obi1kenobi/cargo-semver-checks-action@v2.6
         with:
           rust-toolchain: manual
           exclude: localsavefile-test # IMPROVE: External list/config for crates to ignore in workspaces
@@ -35,8 +35,12 @@ jobs:
           tool: cargo-workspaces
       - name: Check for Changes
         run: cargo workspaces changed --error-on-empty
+      - name: Git Set User
+        run: |-
+          git config user.name 'github-actions[bot]'
+          git config user.email 'github-actions[bot]@users.noreply.github.com'
       - name: Bump Version
-        run: cargo workspaces version --force * --no-git-push --no-individual-tags --exact -y patch
+        run: cargo workspaces version --force '*' --no-git-push --no-individual-tags --exact -y patch
       - name: Update CHANGELOG.md
         uses: orhun/git-cliff-action@v3
         with:
@@ -47,8 +51,6 @@ jobs:
           GITHUB_REPO: ${{ github.repository }}
       - name: Git Commit CHANGELOG.md
         run: |-
-          git config user.name 'github-actions[bot]'
-          git config user.email 'github-actions[bot]@users.noreply.github.com'
           git add CHANGELOG.md
           git commit -m "docs: :memo: Update CHANGELOG.md"
       - name: Push changes
