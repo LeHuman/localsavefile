@@ -23,7 +23,9 @@ jobs:
         with:
           rust-toolchain: manual
           exclude: localsavefile-test # IMPROVE: External list/config for crates to ignore in workspaces
-      - uses: taiki-e/install-action@cargo-workspaces
+      - uses: taiki-e/install-action@v2
+        with:
+          tool: cargo-workspaces
       - name: Bump Version
         run: |
           cargo workspaces changed --error-on-empty
