@@ -41,7 +41,7 @@ jobs:
           git config user.email 'github-actions[bot]@users.noreply.github.com'
       - name: Bump Version
         run: |
-          cargo workspaces version --force '*' --no-git-push --no-individual-tags --exact -y patch
+          cargo workspaces version --force '*' --no-git-push --no-individual-tags --message "chore: :bookmark: Release v%v" --exact -y patch
       - name: Capture Version
         run: |
           {
@@ -107,7 +107,9 @@ jobs:
             echo "Checking PR checks..."
 
             # Check if any checks have failed
-            CHECK_FAILED=$(gh pr checks "${{ env.pr_number }}" --json state 2>&1 | grep FAILURE)
+            set +e
+            CHECK_FAILED=$(gh pr checks "${{ env.pr_number }}" --json state 2>&1 | grep FAILURE 2>&1)
+            set -e
             if [[ "$CHECK_FAILED" ]]; then
                 echo "PR checks failed. Exiting."
                 exit 1
@@ -130,7 +132,9 @@ jobs:
           git fetch --all
           git checkout main
           git pull origin main
+          set +e
           git tag v${{ env.VERSION }} 2>&1
+          set -e
           git push origin tag v${{ env.VERSION }}
       - name: Cleanup branch if workflow fails
         if: failure() || always()
