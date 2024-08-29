@@ -1,5 +1,0 @@
-[workspace]
-members = ["localsavefile", "localsavefile-derive", "localsavefile-test"]
-default-members = ["localsavefile", "localsavefile-derive"]
-
-resolver = "2"
