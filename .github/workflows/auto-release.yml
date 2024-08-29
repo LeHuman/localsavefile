@@ -25,16 +25,16 @@ jobs:
       - name: Install Rust toolchain
         uses: dtolnay/rust-toolchain@stable
       - uses: Swatinem/rust-cache@v2
-      - name: Check semver # IMPROVE: Bump version appropriately
-        uses: obi1kenobi/cargo-semver-checks-action@v2.6
-        with:
-          rust-toolchain: manual
-          exclude: localsavefile-test # IMPROVE: External list/config for crates to ignore in workspaces
       - uses: taiki-e/install-action@v2
         with:
           tool: cargo-workspaces
       - name: Check for Changes
         run: cargo workspaces changed --error-on-empty
+      - name: Check semver # IMPROVE: Bump version appropriately
+        uses: obi1kenobi/cargo-semver-checks-action@v2.6
+        with:
+          rust-toolchain: manual
+          exclude: localsavefile-test # IMPROVE: External list/config for crates to ignore in workspaces
       - name: Git Set User
         run: |-
           git config user.name 'github-actions[bot]'
