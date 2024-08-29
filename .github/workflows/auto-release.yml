@@ -107,7 +107,7 @@ jobs:
             echo "Checking PR checks..."
 
             # Check if any checks have failed
-            CHECK_FAILED=$(gh pr checks "${{ env.pr_number }}" --json state | grep FAILURE) || true
+            CHECK_FAILED=$(gh pr checks "${{ env.pr_number }}" --json state 2>&1 | grep FAILURE 2>&1) || true
             if [[ "$CHECK_FAILED" ]]; then
                 echo "PR checks failed. Exiting."
                 exit 1
@@ -130,7 +130,7 @@ jobs:
           git fetch --all
           git checkout main
           git pull origin main
-          git tag v${{ env.VERSION }} || true
+          git tag v${{ env.VERSION }} 2>&1 || true
           git push origin tag v${{ env.VERSION }}
       - name: Cleanup branch if workflow fails
         if: failure() || always()
