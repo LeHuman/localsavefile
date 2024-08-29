@@ -40,8 +40,15 @@ jobs:
       - name: Bump Version
         run: |
           cargo workspaces version --force '*' --no-git-push --no-individual-tags --exact -y patch
-          cargo workspaces version --force '*' --no-git-commit -y skip >> ver.out
-          echo "VERSION=$(cat ver.out | grep 'common version' | sed 's/.*version //')" >> $GITHUB_ENV
+      - name: Capture Version
+        run: |
+          {
+            echo 'ws_version<<EOF'
+            cargo workspaces version --force '*' --no-git-commit -y skip
+            echo EOF
+          } >> "$GITHUB_ENV"
+      - name: Output Version
+        run: echo "VERSION=$(echo "$ws_version" | grep 'common version' | sed 's/.*version //')" >> $GITHUB_ENV
       - name: Update CHANGELOG.md
         uses: orhun/git-cliff-action@v3
         with:
