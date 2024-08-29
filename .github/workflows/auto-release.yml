@@ -99,6 +99,7 @@ jobs:
             fi  
             echo "Still waiting for PR to be merged or fail."
             sleep 10
+          done
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Tag the merge commit
