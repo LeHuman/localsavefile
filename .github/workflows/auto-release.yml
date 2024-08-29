@@ -11,6 +11,12 @@ jobs:
     name: Auto Release
     runs-on: ubuntu-latest
     steps:
+      - name: Wait for status checks
+        uses: "WyriHaximus/github-action-wait-for-status@v2"
+        with:
+          checkInterval: 10
+        env:
+          GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
