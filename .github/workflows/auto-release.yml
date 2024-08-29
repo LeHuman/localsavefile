@@ -57,7 +57,6 @@ jobs:
           git add CHANGELOG.md
           git commit -m "docs: :memo: Update CHANGELOG.md"
           git push origin HEAD:auto-release-${{ env.VERSION }}
-          git status
       - name: Create pull request
         run: gh pr create --title "Auto Release v${{ env.VERSION }}" --body "Auto release for v${{ env.VERSION }}" --base main --head auto-release-${{ env.VERSION }}
         env:
