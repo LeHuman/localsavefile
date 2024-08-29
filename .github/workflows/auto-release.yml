@@ -44,7 +44,7 @@ jobs:
         run: |
           {
             echo 'ws_version<<EOF'
-            cargo workspaces version --force '*' --no-git-commit -y skip
+            cargo workspaces version --force '*' --no-git-commit -y skip 2>&1
             echo EOF
           } >> "$GITHUB_ENV"
       - name: Output Version
