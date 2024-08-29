@@ -22,9 +22,10 @@ jobs:
         uses: obi1kenobi/cargo-semver-checks-action@v2
         with:
           rust-toolchain: manual
+          exclude: localsavefile-test # IMPROVE: External list/config for crates to ignore in workspaces
+      - uses: taiki-e/install-action@cargo-workspaces
       - name: Bump Version
         run: |
-          cargo install cargo-workspaces
           cargo workspaces changed --error-on-empty
           cargo workspaces version --force * --no-git-push --no-individual-tags --exact -y patch
       - name: Update CHANGELOG.md
