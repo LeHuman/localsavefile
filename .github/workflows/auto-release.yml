@@ -1,4 +1,5 @@
 name: Auto Release
+# Enable Settings > General > Allow auto-merge
 on:
   schedule:
     # At 00:00 on Sunday
