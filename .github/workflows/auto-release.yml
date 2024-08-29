@@ -61,79 +61,79 @@ jobs:
           GITHUB_REPO: ${{ github.repository }}
       - name: Git Commit CHANGELOG.md
         run: |-
-          cat CHANGELOG.md
           git add CHANGELOG.md
           git commit -m "docs: :memo: Update CHANGELOG.md"
           git push origin HEAD:auto-release-${{ env.VERSION }}
-    #   - name: Create pull request
-    #     run: |
-    #       gh pr create --title "Auto Release v${{ env.VERSION }}" --body "Auto release for v${{ env.VERSION }}" --base main --head auto-release-${{ env.VERSION }}
-    #       pr_url=$(gh pr list --base main --head auto-release-${{ env.VERSION }} --json number -q '.[0].number')
-    #       echo "pr_number=$pr_url" >> $GITHUB_ENV
-    #       echo $pr_url
-    #     env:
-    #       GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-    #   - name: Get the commit SHA of the pull request
-    #     run: |
-    #       pr_sha=$(gh api "repos/${{ github.repository }}/pulls/${{ env.pr_number }}/reviews")
-    #       echo "pr_sha=$pr_sha" >> $GITHUB_ENV
-    #       echo $pr_sha
-    #     env:
-    #       GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-    #   - name: Merge the pull request
-    #     run: gh pr merge --auto --merge --repo ${{ github.repository }} ${{ env.pr_number }}
-    #     env:
-    #       GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-    #   - name: Wait until PR is merged or checks fail
-    #     run: |
-    #       COUNTER=0
-    #       MAX_RETRIES=12
-    #       SLEEP_TIME=10
+      - name: Create pull request
+        run: |
+          gh pr create --title "Auto Release v${{ env.VERSION }}" --body "Auto release for v${{ env.VERSION }}" --base main --head auto-release-${{ env.VERSION }}
+          pr_url=$(gh pr list --base main --head auto-release-${{ env.VERSION }} --json number -q '.[0].number')
+          echo "pr_number=$pr_url" >> $GITHUB_ENV
+          echo $pr_url
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Get the commit SHA of the pull request
+        run: |
+          pr_sha=$(gh api "repos/${{ github.repository }}/pulls/${{ env.pr_number }}/reviews")
+          echo "pr_sha=$pr_sha" >> $GITHUB_ENV
+          echo $pr_sha
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Merge the pull request
+        run: gh pr merge --auto --merge --repo ${{ github.repository }} ${{ env.pr_number }}
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Wait until PR is merged or checks fail
+        run: |
+          COUNTER=0
+          MAX_RETRIES=12
+          SLEEP_TIME=10
 
-    #       while ((COUNTER < MAX_RETRIES)); do
-    #         echo "Checking PR status..."
+          while ((COUNTER < MAX_RETRIES)); do
+            echo "Checking PR status..."
 
-    #         # Fetch PR status
-    #         PR_STATUS=$(gh pr view "${{ env.pr_number }}" --json state --jq ".state")
+            # Fetch PR status
+            PR_STATUS=$(gh pr view "${{ env.pr_number }}" --json state --jq ".state")
 
-    #         # Check if PR is merged or closed
-    #         if [[ "$PR_STATUS" == "MERGED" ]]; then
-    #             echo "PR is merged. Exiting."
-    #             exit 0
-    #         elif [[ "$PR_STATUS" == "CLOSED" ]]; then
-    #             echo "PR was closed. Exiting."
-    #             exit 0
-    #         fi
+            # Check if PR is merged or closed
+            if [[ "$PR_STATUS" == "MERGED" ]]; then
+                echo "PR is merged. Exiting."
+                exit 0
+            elif [[ "$PR_STATUS" == "CLOSED" ]]; then
+                echo "PR was closed. Exiting."
+                exit 0
+            fi
 
-    #         echo "Checking PR checks..."
+            echo "Checking PR checks..."
 
-    #         # Check if any checks have failed
-    #         CHECK_FAILED=$(gh pr checks "${{ env.pr_number }}" --json state 2>&1 | grep FAILURE 2>&1)
-    #         if [[ "$CHECK_FAILED" ]]; then
-    #             echo "PR checks failed. Exiting."
-    #             exit 1
-    #         fi
+            # Check if any checks have failed
+            CHECK_FAILED=$(gh pr checks "${{ env.pr_number }}" --json state 2>&1 | grep FAILURE)
+            if [[ "$CHECK_FAILED" ]]; then
+                echo "PR checks failed. Exiting."
+                exit 1
+            fi
 
-    #         # Increment the counter and wait
-    #         (( COUNTER++ ))
-    #         echo "Still waiting for PR to be merged or fail. Attempt $COUNTER of $MAX_RETRIES."
-    #         sleep $SLEEP_TIME
-    #       done
+            # Increment the counter and wait
+            (( COUNTER++ ))
+            echo "Still waiting for PR to be merged or fail. Attempt $COUNTER of $MAX_RETRIES."
+            sleep $SLEEP_TIME
+          done
 
-    #       echo "Maximum retries reached. Exiting."
-    #       exit 1
-    #     env:
-    #       GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-    #   - name: Tag the merge commit
-    #     if: success()
-    #     run: |-
-    #       git reset --hard
-    #       git fetch --all
-    #       git checkout main
-    #       git pull origin main
-    #       git push origin tag v${{ env.VERSION }}
-    #   - name: Cleanup branch if workflow fails
-    #     if: failure() || always()
-    #     run: gh api -X DELETE "repos/${{ github.repository }}/git/refs/heads/auto-release-${{ env.VERSION }}" || true
-    #     env:
-    #       GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          echo "Maximum retries reached. Exiting."
+          exit 1
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Tag the merge commit
+        if: success()
+        run: |-
+          git reset --hard
+          git fetch --all
+          git checkout main
+          git pull origin main
+          git tag v${{ env.VERSION }} 2>&1
+          git push origin tag v${{ env.VERSION }}
+      - name: Cleanup branch if workflow fails
+        if: failure() || always()
+        run: gh api -X DELETE "repos/${{ github.repository }}/git/refs/heads/auto-release-${{ env.VERSION }}" || true
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
