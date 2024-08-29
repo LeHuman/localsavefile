@@ -43,7 +43,7 @@ jobs:
         id: get_version
         run: |
           cargo workspaces version --force '*' --no-git-push --no-individual-tags --exact -y patch
-          VERSION=$(cargo workspaces version --no-git-commit -y skip | grep 'common version' | sed 's/.*version //')
+          VERSION=$(cargo workspaces version --force '*' --no-git-commit -y skip | grep 'common version' | sed 's/.*version //')
           echo "VERSION=$VERSION"
           echo "VERSION=$VERSION" >> $GITHUB_ENV
       - name: Update CHANGELOG.md
