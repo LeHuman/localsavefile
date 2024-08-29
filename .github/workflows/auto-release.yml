@@ -80,26 +80,34 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Merge the pull request
-        run: gh pr merge --auto --merge --delete-branch --repo ${{ github.repository }} ${{ env.pr_number }}
+        run: gh pr merge --auto --merge --repo ${{ github.repository }} ${{ env.pr_number }}
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - name: Wait for PR tests to succeed
-        uses: noirbizarre/need-checks@main
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          wait_interval: 10
-          wait_timeout: 120
-          ref: ${{ env.pr_sha }}
-      - name: Sleep for 5 seconds
-        run: sleep 5s
-        shell: bash
+      - name: Wait until PR is merged or checks fail
+        run: |
+          while [[ "$PR_STATE" != "closed" ]]; do
+            echo "Checking PR status..."
+            PR_STATUS=$(gh pr view ${{ env.pr_number }} --json mergeable,merged --jq ".merged")
+            if [[ "$PR_STATUS" == "true" ]]; then
+              echo "PR is merged. Exiting."
+              exit 0
+            fi  
+            CHECK_RUN_CONCLUSION=$(gh pr checks ${{ env.pr_number }} --json conclusion --jq ".conclusion")  
+            if [[ "$CHECK_RUN_CONCLUSION" == "failure" ]]; then
+              echo "PR checks failed. Exiting."
+              exit 1
+            fi  
+            echo "Still waiting for PR to be merged or fail."
+            sleep 10
+          done
       - name: Tag the merge commit
         if: success()
         run: |-
           git fetch origin main
           git checkout main
-          git tag v${{ env.VERSION }}
-          git push origin v${{ env.VERSION }}
+          git push origin tag v${{ env.VERSION }}
+        #   git tag v${{ env.VERSION }}
+        #   git push origin v${{ env.VERSION }}
       - name: Cleanup branch if workflow fails
         if: failure() || always()
         run: gh api -X DELETE "repos/${{ github.repository }}/git/refs/heads/auto-release-${{ env.VERSION }}" || true
