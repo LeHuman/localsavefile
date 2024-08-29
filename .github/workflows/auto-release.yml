@@ -40,7 +40,12 @@ jobs:
           git config user.name 'github-actions[bot]'
           git config user.email 'github-actions[bot]@users.noreply.github.com'
       - name: Bump Version
-        run: cargo workspaces version --force '*' --no-git-push --no-individual-tags --exact -y patch
+        id: get_version
+        run: |
+          cargo workspaces version --force '*' --no-git-push --no-individual-tags --exact -y patch
+          VERSION=$(cargo workspaces version --no-git-commit -y skip | grep 'common version' | sed 's/.*version //')
+          echo "VERSION=$VERSION"
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
       - name: Update CHANGELOG.md
         uses: orhun/git-cliff-action@v3
         with:
@@ -53,8 +58,18 @@ jobs:
         run: |-
           git add CHANGELOG.md
           git commit -m "docs: :memo: Update CHANGELOG.md"
-      - name: Push changes
-        uses: ad-m/github-push-action@master
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          branch: ${{ github.ref }}
+          git push origin HEAD:auto-release-${{ env.VERSION }}
+      - name: Create pull request
+        run: gh pr create --title "Auto Release v${{ env.VERSION }}" --body "Auto release for v${{ env.VERSION }}" --base main --head auto-release-${{ env.VERSION }}
+      - name: Merge the pull request
+        run: gh pr merge --auto --squash --delete-branch --repo ${{ github.repository }} $(gh pr list --base main --head auto-release-${{ env.VERSION }} --json number -q '.[0].number')
+      - name: Tag the merge commit
+        if: success()
+        run: |-
+          git fetch origin main
+          git checkout main
+          git tag v${{ env.VERSION }}
+          git push origin v${{ env.VERSION }}
+      - name: Cleanup branch if workflow fails
+        if: failure() || always()
+        run: gh api -X DELETE "repos/${{ github.repository }}/git/refs/heads/auto-release-${{ env.VERSION }}" || true
