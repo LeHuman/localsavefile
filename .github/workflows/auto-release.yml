@@ -65,21 +65,30 @@ jobs:
           git commit -m "docs: :memo: Update CHANGELOG.md"
           git push origin HEAD:auto-release-${{ env.VERSION }}
       - name: Create pull request
-        run: gh pr create --title "Auto Release v${{ env.VERSION }}" --body "Auto release for v${{ env.VERSION }}" --base main --head auto-release-${{ env.VERSION }}
+        run: |
+          pr_url=$(gh pr create --title "Auto Release v${{ env.VERSION }}" --body "Auto release for v${{ env.VERSION }}" --base main --head auto-release-${{ env.VERSION }} --json number --jq '.number')
+          echo "pr_number=$pr_url" >> $GITHUB_ENV
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Get the commit SHA of the pull request
+        run: |
+          pr_sha=$(gh pr view ${{ env.pr_number }} --json commits --jq '.commits[0].sha')
+          echo "pr_sha=$pr_sha" >> $GITHUB_ENV
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Merge the pull request
-        run: gh pr merge --auto --merge --delete-branch --repo ${{ github.repository }} $(gh pr list --base main --head auto-release-${{ env.VERSION }} --json number -q '.[0].number')
+        run: gh pr merge --auto --merge --delete-branch --repo ${{ github.repository }} ${{ env.pr_number }}
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - name: GitHub Checks
-        uses: poseidon/wait-for-status-checks@v0.5.0
+      - name: Wait for PR tests to succeed
+        uses: noirbizarre/need-checks@main
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          timeout: 500
-          ignore: ${{ github.workflow }}
-      - name: Sleep for 10 seconds
-        run: sleep 10s
+          wait_interval: 10
+          wait_timeout: 120
+          ref: ${{ env.pr_sha }}
+      - name: Sleep for 5 seconds
+        run: sleep 5s
         shell: bash
       - name: Tag the merge commit
         if: success()
