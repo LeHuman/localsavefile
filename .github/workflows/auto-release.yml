@@ -40,10 +40,11 @@ jobs:
           git config user.name 'github-actions[bot]'
           git config user.email 'github-actions[bot]@users.noreply.github.com'
       - name: Bump Version
-        id: get_version
         run: |
           cargo workspaces version --force '*' --no-git-push --no-individual-tags --exact -y patch
-          VERSION=$(cargo workspaces version --force '*' --no-git-commit -y skip | grep 'common version' | sed 's/.*version //')
+          cargo workspaces version --no-git-commit -y skip
+          cargo workspaces version --no-git-commit -y skip | grep 'common version' | sed 's/.*version //'
+          VERSION=$(cargo workspaces version --no-git-commit -y skip | grep 'common version' | sed 's/.*version //')
           echo "VERSION=$VERSION"
           echo "VERSION=$VERSION" >> $GITHUB_ENV
       - name: Update CHANGELOG.md
@@ -59,6 +60,7 @@ jobs:
           git add CHANGELOG.md
           git commit -m "docs: :memo: Update CHANGELOG.md"
           git push origin HEAD:auto-release-${{ env.VERSION }}
+          git status
       - name: Create pull request
         run: gh pr create --title "Auto Release v${{ env.VERSION }}" --body "Auto release for v${{ env.VERSION }}" --base main --head auto-release-${{ env.VERSION }}
         env:
