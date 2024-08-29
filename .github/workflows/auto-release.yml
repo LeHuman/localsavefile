@@ -99,15 +99,14 @@ jobs:
             fi  
             echo "Still waiting for PR to be merged or fail."
             sleep 10
-          done
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Tag the merge commit
         if: success()
         run: |-
           git fetch origin main
           git checkout main
           git push origin tag v${{ env.VERSION }}
-        #   git tag v${{ env.VERSION }}
-        #   git push origin v${{ env.VERSION }}
       - name: Cleanup branch if workflow fails
         if: failure() || always()
         run: gh api -X DELETE "repos/${{ github.repository }}/git/refs/heads/auto-release-${{ env.VERSION }}" || true
