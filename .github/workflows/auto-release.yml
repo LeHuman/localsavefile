@@ -1,5 +1,6 @@
 name: Auto Release
 # Enable Settings > General > Allow auto-merge
+
 on:
   schedule:
     # At 00:00 on Sunday
@@ -12,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: GitHub Checks
-        uses: poseidon/wait-for-status-checks@v0.4.1
+        uses: poseidon/wait-for-status-checks@v0.5.0
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           timeout: 500
@@ -68,9 +69,18 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Merge the pull request
-        run: gh pr merge --auto --squash --delete-branch --repo ${{ github.repository }} $(gh pr list --base main --head auto-release-${{ env.VERSION }} --json number -q '.[0].number')
+        run: gh pr merge --auto --merge --delete-branch --repo ${{ github.repository }} $(gh pr list --base main --head auto-release-${{ env.VERSION }} --json number -q '.[0].number')
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: GitHub Checks
+        uses: poseidon/wait-for-status-checks@v0.5.0
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          timeout: 500
+          ignore: ${{ github.workflow }}
+      - name: Sleep for 10 seconds
+        run: sleep 10s
+        shell: bash
       - name: Tag the merge commit
         if: success()
         run: |-
