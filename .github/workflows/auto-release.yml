@@ -1,0 +1,48 @@
+name: Auto Release
+on:
+  schedule:
+    # At 00:00 on Sunday
+    - cron: '0 0 * * 0'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  release:
+    name: Auto Release
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
+      - name: Check semver # IMPROVE: Bump version appropriately
+        uses: obi1kenobi/cargo-semver-checks-action@v2
+        with:
+          rust-toolchain: manual
+      - name: Bump Version
+        run: |
+          cargo install cargo-workspaces
+          cargo workspaces changed --error-on-empty
+          cargo workspaces version --force * --no-git-push --no-individual-tags --exact -y patch
+      - name: Update CHANGELOG.md
+        uses: orhun/git-cliff-action@v3
+        with:
+          config: cliff.toml
+          args: --verbose
+        env:
+          OUTPUT: CHANGELOG.md
+          GITHUB_REPO: ${{ github.repository }}
+      - name: Git Commit CHANGELOG.md
+        run: |-
+          git config user.name 'github-actions[bot]'
+          git config user.email 'github-actions[bot]@users.noreply.github.com'
+          git add CHANGELOG.md
+          git commit -m "docs: :memo: Update CHANGELOG.md"
+      - name: Push changes
+        uses: ad-m/github-push-action@master
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          branch: ${{ github.ref }}
