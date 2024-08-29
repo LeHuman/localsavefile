@@ -2,4 +2,4 @@
 .cargo-ok
 .DS_Store
 
-semver-checks
+/semver-checks
