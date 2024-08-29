@@ -61,8 +61,12 @@ jobs:
           git push origin HEAD:auto-release-${{ env.VERSION }}
       - name: Create pull request
         run: gh pr create --title "Auto Release v${{ env.VERSION }}" --body "Auto release for v${{ env.VERSION }}" --base main --head auto-release-${{ env.VERSION }}
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Merge the pull request
         run: gh pr merge --auto --squash --delete-branch --repo ${{ github.repository }} $(gh pr list --base main --head auto-release-${{ env.VERSION }} --json number -q '.[0].number')
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Tag the merge commit
         if: success()
         run: |-
@@ -73,3 +77,5 @@ jobs:
       - name: Cleanup branch if workflow fails
         if: failure() || always()
         run: gh api -X DELETE "repos/${{ github.repository }}/git/refs/heads/auto-release-${{ env.VERSION }}" || true
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
