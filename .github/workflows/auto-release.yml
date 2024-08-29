@@ -17,6 +17,7 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           timeout: 500
+          ignore: ${{ github.workflow }}
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
