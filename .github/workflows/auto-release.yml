@@ -85,28 +85,49 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Wait until PR is merged or checks fail
         run: |
-          while [[ "$PR_STATE" != "closed" ]]; do
+          COUNTER=0
+          MAX_RETRIES=12
+          SLEEP_TIME=10
+
+          while ((COUNTER < MAX_RETRIES)); do
             echo "Checking PR status..."
-            PR_STATUS=$(gh pr view ${{ env.pr_number }} --json mergeable,merged --jq ".merged")
-            if [[ "$PR_STATUS" == "true" ]]; then
-              echo "PR is merged. Exiting."
-              exit 0
-            fi  
-            CHECK_RUN_CONCLUSION=$(gh pr checks ${{ env.pr_number }} --json conclusion --jq ".conclusion")  
-            if [[ "$CHECK_RUN_CONCLUSION" == "failure" ]]; then
-              echo "PR checks failed. Exiting."
-              exit 1
-            fi  
-            echo "Still waiting for PR to be merged or fail."
-            sleep 10
+
+            # Fetch PR status
+            PR_STATUS=$(gh pr view "${{ env.pr_number }}" --json state --jq ".state")
+
+            # Check if PR is merged or closed
+            if [[ "$PR_STATUS" == "MERGED" ]]; then
+                echo "PR is merged. Exiting."
+                exit 0
+            elif [[ "$PR_STATUS" == "CLOSED" ]]; then
+                echo "PR was closed. Exiting."
+                exit 0
+            fi
+
+            # Check if any checks have failed
+            CHECK_FAILED=$(gh pr checks "${{ env.pr_number }}" --json state | grep FAILURE)
+            if [[ "$CHECK_FAILED" ]]; then
+                echo "PR checks failed. Exiting."
+                exit 1
+            fi
+
+            # Increment the counter and wait
+            (( COUNTER++ ))
+            echo "Still waiting for PR to be merged or fail. Attempt $COUNTER of $MAX_RETRIES."
+            sleep $SLEEP_TIME
           done
+
+          echo "Maximum retries reached. Exiting."
+          exit 1
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Tag the merge commit
         if: success()
         run: |-
-          git fetch origin main
+          git reset --hard
+          git fetch --all
           git checkout main
+          git pull origin main
           git push origin tag v${{ env.VERSION }}
       - name: Cleanup branch if workflow fails
         if: failure() || always()
