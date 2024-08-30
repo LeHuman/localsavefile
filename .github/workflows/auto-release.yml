@@ -24,17 +24,19 @@ jobs:
           fetch-depth: 0
       - name: Install Rust toolchain
         uses: dtolnay/rust-toolchain@stable
+        with:
+          components: rustfmt, clippy
       - uses: Swatinem/rust-cache@v2
       - uses: taiki-e/install-action@v2
         with:
           tool: cargo-workspaces
       - name: Check for Changes
         run: cargo workspaces changed --error-on-empty
-    #   - name: Check semver # IMPROVE: Bump version appropriately
-    #     uses: obi1kenobi/cargo-semver-checks-action@v2.6
-    #     with:
-    #       rust-toolchain: manual
-    #       exclude: localsavefile-test # IMPROVE: External list/config for crates to ignore in workspaces
+      - name: Check semver # IMPROVE: Bump version appropriately
+        uses: obi1kenobi/cargo-semver-checks-action@v2.6
+        with:
+          rust-toolchain: manual
+          exclude: localsavefile-test # IMPROVE: External list/config for crates to ignore in workspaces
       - name: Git Set User
         run: |-
           git config user.name 'github-actions[bot]'
@@ -65,23 +67,20 @@ jobs:
           git commit -m "docs: :memo: Update CHANGELOG.md"
           git push origin HEAD:auto-release-${{ env.VERSION }}
           git status
-      - name: Invoke CI Workflow
-        uses: benc-uk/workflow-dispatch@v1
+      - name: Run security audit
+        uses: rustsec/audit-check@v1.4.1
         with:
-          workflow: CI
-          ref: auto-release-${{ env.VERSION }}
-      - name: Invoke Security audit Workflow
-        uses: benc-uk/workflow-dispatch@v1
-        with:
-          workflow: Security audit
-          ref: auto-release-${{ env.VERSION }}
-      - name: Wait for status check
-        uses: omkarkhatavkar/wait-for-status-checks@main
-        with:
-          ref: auto-release-${{ env.VERSION }}
-          context: ''
-          wait-interval: 10
-          count: 12
+          token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Run tests # TODO: Rust CI/CD externally
+        run: cargo test --all-features --workspace
+      - name: Check formatting
+        run: cargo fmt --all --check
+      - name: Clippy check
+        run: cargo clippy --all-targets --all-features --workspace -- -D warnings
+      - name: Check documentation
+        env:
+          RUSTDOCFLAGS: -D warnings
+        run: cargo doc --no-deps --document-private-items --all-features --workspace --examples
       - name: Create pull request
         run: |
           gh pr create --title "Auto Release v${{ env.VERSION }}" --body "Auto release for v${{ env.VERSION }}" --base main --head auto-release-${{ env.VERSION }}
@@ -146,12 +145,11 @@ jobs:
           set +e
           git tag v${{ env.VERSION }} || true
           git push origin tag v${{ env.VERSION }}
-      - name: Cleanup branch if workflow fails
-        if: failure() || always()
-        run: gh api -X DELETE "repos/${{ github.repository }}/git/refs/heads/auto-release-${{ env.VERSION }}" || true
+      - name: Publish localsavefile-derive #TODO: Rust CI/CD externally
+        run: cargo publish -p localsavefile-derive
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - name: Invoke CD Workflow
-        uses: benc-uk/workflow-dispatch@v1
-        with:
-          workflow: CD
+          CARGO_REGISTRY_TOKEN: ${{ secrets.CARGO_REGISTRY_TOKEN }}
+      - name: Publish localsavefile
+        run: cargo publish -p localsavefile
+        env:
+          CARGO_REGISTRY_TOKEN: ${{ secrets.CARGO_REGISTRY_TOKEN }}

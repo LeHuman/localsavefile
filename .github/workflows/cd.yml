@@ -3,7 +3,6 @@ on:
   push:
     tags:
       - '[v]?[0-9]+.[0-9]+.[0-9]+'
-  workflow_dispatch:
 jobs:
   publish-cargo:
     name: Publishing to Cargo
@@ -14,9 +13,11 @@ jobs:
       - name: Install Rust toolchain
         uses: dtolnay/rust-toolchain@stable
       - uses: Swatinem/rust-cache@v2
-      - run: cargo publish -p localsavefile-derive
+      - name: Publish localsavefile-derive
+        run: cargo publish -p localsavefile-derive
         env:
           CARGO_REGISTRY_TOKEN: ${{ secrets.CARGO_REGISTRY_TOKEN }}
-      - run: cargo publish -p localsavefile
+      - name: Publish localsavefile
+        run: cargo publish -p localsavefile
         env:
           CARGO_REGISTRY_TOKEN: ${{ secrets.CARGO_REGISTRY_TOKEN }}
