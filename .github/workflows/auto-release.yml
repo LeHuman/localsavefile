@@ -75,12 +75,13 @@ jobs:
         with:
           workflow: Security audit
           ref: auto-release-${{ env.VERSION }}
-      - name: GitHub Checks pt.2
-        uses: poseidon/wait-for-status-checks@v0.5.0
+      - name: Wait for status check
+        uses: omkarkhatavkar/wait-for-status-checks@main
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          timeout: 500
-          ignore: ${{ github.workflow }}
+          ref: auto-release-${{ env.VERSION }}
+          context: ''
+          wait-interval: 10
+          count: 12
       - name: Create pull request
         run: |
           gh pr create --title "Auto Release v${{ env.VERSION }}" --body "Auto release for v${{ env.VERSION }}" --base main --head auto-release-${{ env.VERSION }}
@@ -89,13 +90,6 @@ jobs:
           echo $pr_url
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-    #   - name: Get the commit SHA of the pull request
-    #     run: |
-    #       pr_sha=$(gh api "repos/${{ github.repository }}/pulls/${{ env.pr_number }}" --jq ".head.sha")
-    #       echo "pr_sha=$pr_sha" >> $GITHUB_ENV
-    #       echo PULL REQUEST: $pr_sha
-    #     env:
-    #       GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Merge the pull request
         run: gh pr merge --auto --merge --repo ${{ github.repository }} ${{ env.pr_number }}
         env:
