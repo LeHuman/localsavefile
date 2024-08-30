@@ -41,7 +41,7 @@ jobs:
           git config user.email 'github-actions[bot]@users.noreply.github.com'
       - name: Bump Version
         run: |
-          cargo workspaces version --force '*' --no-git-push --no-individual-tags --no-git-tag --no-global-tag --message "chore: :bookmark: Release v%v" --exact -y patch
+          cargo workspaces version --force '*' --no-git-push --no-git-tag --no-global-tag --message "chore: :bookmark: Release v%v" --exact -y patch
       - name: Capture Version
         run: |
           {
