@@ -41,7 +41,7 @@ jobs:
           git config user.email 'github-actions[bot]@users.noreply.github.com'
       - name: Bump Version
         run: |
-          cargo workspaces version --force '*' --no-git-push --no-individual-tags --message "chore: :bookmark: Release v%v" --exact -y patch
+          cargo workspaces version --force '*' --no-git-push --no-individual-tags --no-git-tag --no-global-tag --message "chore: :bookmark: Release v%v" --exact -y patch
       - name: Capture Version
         run: |
           {
@@ -73,19 +73,23 @@ jobs:
           echo $pr_url
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - name: Trigger CI
-        run: |
-          gh pr close ${{ env.pr_number }}
-          gh pr reopen ${{ env.pr_number }}
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Get the commit SHA of the pull request
         run: |
-          pr_sha=$(gh api "repos/${{ github.repository }}/pulls/${{ env.pr_number }}/reviews")
+          pr_sha=$(gh api "repos/${{ github.repository }}/pulls/${{ env.pr_number }}" --jq ".merge_commit_sha")
           echo "pr_sha=$pr_sha" >> $GITHUB_ENV
           echo PULL REQUEST: $pr_sha
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Invoke CI Workflow
+        uses: benc-uk/workflow-dispatch@v1
+        with:
+          workflow: CI
+          ref: ${{env.pr_sha}}
+      - name: Invoke Security audit Workflow
+        uses: benc-uk/workflow-dispatch@v1
+        with:
+          workflow: Security audit
+          ref: ${{env.pr_sha}}
       - name: Merge the pull request
         run: gh pr merge --auto --merge --repo ${{ github.repository }} ${{ env.pr_number }}
         env:
@@ -147,3 +151,7 @@ jobs:
         run: gh api -X DELETE "repos/${{ github.repository }}/git/refs/heads/auto-release-${{ env.VERSION }}" || true
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Invoke CD Workflow
+        uses: benc-uk/workflow-dispatch@v1
+        with:
+          workflow: CD
