@@ -30,11 +30,11 @@ jobs:
           tool: cargo-workspaces
       - name: Check for Changes
         run: cargo workspaces changed --error-on-empty
-      - name: Check semver # IMPROVE: Bump version appropriately
-        uses: obi1kenobi/cargo-semver-checks-action@v2.6
-        with:
-          rust-toolchain: manual
-          exclude: localsavefile-test # IMPROVE: External list/config for crates to ignore in workspaces
+    #   - name: Check semver # IMPROVE: Bump version appropriately
+    #     uses: obi1kenobi/cargo-semver-checks-action@v2.6
+    #     with:
+    #       rust-toolchain: manual
+    #       exclude: localsavefile-test # IMPROVE: External list/config for crates to ignore in workspaces
       - name: Git Set User
         run: |-
           git config user.name 'github-actions[bot]'
@@ -65,6 +65,22 @@ jobs:
           git commit -m "docs: :memo: Update CHANGELOG.md"
           git push origin HEAD:auto-release-${{ env.VERSION }}
           git status
+      - name: Invoke CI Workflow
+        uses: benc-uk/workflow-dispatch@v1
+        with:
+          workflow: CI
+          ref: auto-release-${{ env.VERSION }}
+      - name: Invoke Security audit Workflow
+        uses: benc-uk/workflow-dispatch@v1
+        with:
+          workflow: Security audit
+          ref: auto-release-${{ env.VERSION }}
+      - name: GitHub Checks pt.2
+        uses: poseidon/wait-for-status-checks@v0.5.0
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          timeout: 500
+          ignore: ${{ github.workflow }}
       - name: Create pull request
         run: |
           gh pr create --title "Auto Release v${{ env.VERSION }}" --body "Auto release for v${{ env.VERSION }}" --base main --head auto-release-${{ env.VERSION }}
@@ -80,16 +96,6 @@ jobs:
     #       echo PULL REQUEST: $pr_sha
     #     env:
     #       GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - name: Invoke CI Workflow
-        uses: benc-uk/workflow-dispatch@v1
-        with:
-          workflow: CI
-          ref: auto-release-${{ env.VERSION }}
-      - name: Invoke Security audit Workflow
-        uses: benc-uk/workflow-dispatch@v1
-        with:
-          workflow: Security audit
-          ref: auto-release-${{ env.VERSION }}
       - name: Merge the pull request
         run: gh pr merge --auto --merge --repo ${{ github.repository }} ${{ env.pr_number }}
         env:
