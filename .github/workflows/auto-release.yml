@@ -75,7 +75,7 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Get the commit SHA of the pull request
         run: |
-          pr_sha=$(gh api "repos/${{ github.repository }}/pulls/${{ env.pr_number }}" --jq ".merge_commit_sha")
+          pr_sha=$(gh api "repos/${{ github.repository }}/pulls/${{ env.pr_number }}" --jq ".head.sha")
           echo "pr_sha=$pr_sha" >> $GITHUB_ENV
           echo PULL REQUEST: $pr_sha
         env:
