@@ -1,8 +1,8 @@
 name: Security audit
 on:
   schedule:
-    # Runs at 00:00 UTC everyday
-    - cron: '0 0 * * *'
+    # Runs at 12:00am on every 4th day
+    - cron: '0 0 */4 * *'
   push:
     paths:
       - '**/Cargo.toml'
