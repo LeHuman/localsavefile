@@ -4,6 +4,16 @@ All notable changes to this project will be documented in this file.
 
 ## [unreleased]
 
+### ⚙️ Miscellaneous Tasks
+
+- :bookmark: Release v0.2.5
+
+### Build
+
+- *(deps)* Bump syn from 2.0.76 to 2.0.77
+
+## [0.2.4] - 2024-08-30
+
 ### 📚 Documentation
 
 - :memo: Update CHANGELOG.md
