@@ -6,6 +6,23 @@ All notable changes to this project will be documented in this file.
 
 ### ⚙️ Miscellaneous Tasks
 
+- :bookmark: Release v0.2.6
+
+### Build
+
+- *(deps)* Bump syn from 2.0.77 to 2.0.79
+- *(deps)* Bump rustsec/audit-check from 1.4.1 to 2.0.0
+- :arrow_up: Cargo upgrade dependencies
+- *(deps)* Bump savefile from 0.17.8 to 0.17.9
+
+## [0.2.5] - 2024-09-08
+
+### 📚 Documentation
+
+- :memo: Update CHANGELOG.md
+
+### ⚙️ Miscellaneous Tasks
+
 - :bookmark: Release v0.2.5
 
 ### Build
