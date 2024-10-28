@@ -435,9 +435,9 @@ checksum = "2b15c43186be67a4fd63bee50d0303afffcef381492ebe2c5d87f324e1b8815c"
 
 [[package]]
 name = "rustc_version"
-version = "0.2.3"
+version = "0.4.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "138e3e0acb6c9fb258b19b67cb8abd63c00679d2851805ea151465464fe9030a"
+checksum = "cfcb3a22ef46e85b45de6ee7e79d063319ebb6594faafcf1c225ea92ab6e9b92"
 dependencies = [
  "semver",
 ]
@@ -454,9 +454,9 @@ dependencies = [
 
 [[package]]
 name = "savefile"
-version = "0.17.13"
+version = "0.18.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "19381cbafec56410f0930a1c5ad46d57dbd612c86274edf67558f1d3e28cd19e"
+checksum = "69d5c0f5703af632fe30456c533d01711e472e5bb02821ce85ae8ef880f087ac"
 dependencies = [
  "arrayvec",
  "bit-set 0.5.3",
@@ -476,9 +476,9 @@ dependencies = [
 
 [[package]]
 name = "savefile-derive"
-version = "0.17.13"
+version = "0.18.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "ad73bf32269325c89e01ce27b535289bde8d25e67772656d2927de349232f9ce"
+checksum = "d5fc0f9754f6a1c8a4c6ca2ddc480f8e940eea895f17484a8bc9d8e09ea51dac"
 dependencies = [
  "proc-macro-error2",
  "proc-macro2",
@@ -494,18 +494,9 @@ checksum = "94143f37725109f92c262ed2cf5e59bce7498c01bcc1502d7b9afe439a4e9f49"
 
 [[package]]
 name = "semver"
-version = "0.9.0"
+version = "1.0.23"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "1d7eb9ef2c18661902cc47e535f9bc51b78acd254da71d375c2f6720d9a40403"
-dependencies = [
- "semver-parser",
-]
-
-[[package]]
-name = "semver-parser"
-version = "0.7.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "388a1df253eca08550bef6c72392cfe7c30914bf41df5269b68cbd6ff8f570a3"
+checksum = "61697e0a1c7e512e84a621326239844a24d8207b4669b41bc18b32ea5cbf988b"
 
 [[package]]
 name = "serde"
