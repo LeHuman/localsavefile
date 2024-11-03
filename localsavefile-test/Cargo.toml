@@ -11,4 +11,4 @@ license = "MIT OR Apache-2.0"
 tracing = "0.1.40"
 tracing-subscriber = "0.3.18"
 localsavefile = { path = "../localsavefile" }
-savefile = "0.17.13"
+savefile = "0.18.3"
