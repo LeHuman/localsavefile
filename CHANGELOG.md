@@ -6,6 +6,21 @@ All notable changes to this project will be documented in this file.
 
 ### ⚙️ Miscellaneous Tasks
 
+- :bookmark: Release v0.2.9
+
+### Build
+
+- *(deps)* Bump proc-macro2 from 1.0.88 to 1.0.89
+- *(deps)* Bump syn from 2.0.82 to 2.0.85
+
+## [0.2.8] - 2024-10-27
+
+### 📚 Documentation
+
+- :memo: Update CHANGELOG.md
+
+### ⚙️ Miscellaneous Tasks
+
 - :bookmark: Release v0.2.8
 
 ### Build
