@@ -6,6 +6,20 @@ All notable changes to this project will be documented in this file.
 
 ### ⚙️ Miscellaneous Tasks
 
+- :bookmark: Release v0.2.10
+
+### Build
+
+- *(deps)* Bump syn from 2.0.85 to 2.0.87
+
+## [0.2.9] - 2024-11-03
+
+### 📚 Documentation
+
+- :memo: Update CHANGELOG.md
+
+### ⚙️ Miscellaneous Tasks
+
 - :bookmark: Release v0.2.9
 
 ### Build
