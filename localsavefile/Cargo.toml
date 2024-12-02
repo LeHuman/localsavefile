@@ -14,4 +14,4 @@ directories = "5.0.1"
 tracing = "0.1.41"
 savefile = { version = "0.17.13", features = ["compression", "derive", "serde"] }
 localsavefile-derive = { version = "=0.2.10", path = "../localsavefile-derive" }
-sanitize-filename = "0.5.0"
+sanitize-filename = "0.6.0"
