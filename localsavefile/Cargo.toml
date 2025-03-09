@@ -10,8 +10,8 @@ license = "MIT OR Apache-2.0"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-directories = "5.0.1"
+directories = "6.0.0"
 tracing = "0.1.41"
 savefile = { version = "0.18.5", features = ["compression", "derive", "serde"] }
-localsavefile-derive = { version = "=0.2.10", path = "../localsavefile-derive" }
+localsavefile-derive = { version = "=0.2.11", path = "../localsavefile-derive" }
 sanitize-filename = "0.6.0"
