@@ -2,7 +2,40 @@
 
 All notable changes to this project will be documented in this file.
 
-## [unreleased]
+## [0.2.13] - 2025-08-07
+
+### ⚙️ Miscellaneous Tasks
+
+- :arrow_up: Update dependencies and bump version
+- :bookmark: Release v0.2.13
+
+### Build
+
+- *(deps)* Bump syn from 2.0.99 to 2.0.100
+- *(deps)* Bump quote from 1.0.39 to 1.0.40
+- *(deps)* Bump darling from 0.20.10 to 0.20.11
+- *(deps)* Bump proc-macro2 from 1.0.94 to 1.0.95
+- *(deps)* Bump syn from 2.0.100 to 2.0.101
+- *(deps)* Bump savefile from 0.18.5 to 0.18.6
+- *(deps)* Bump syn from 2.0.101 to 2.0.103
+- *(deps)* Bump syn from 2.0.103 to 2.0.104
+- *(deps)* Bump savefile from 0.18.6 to 0.18.7
+
+## [0.2.12] - 2025-03-09
+
+### ⚙️ Miscellaneous Tasks
+
+- :bookmark: Release v0.2.12
+
+### Build
+
+- :arrow_up: Update dependencies
+
+## [0.2.11] - 2024-12-08
+
+### 📚 Documentation
+
+- :memo: Update CHANGELOG.md
 
 ### ⚙️ Miscellaneous Tasks
 
@@ -11,6 +44,11 @@ All notable changes to this project will be documented in this file.
 ### Build
 
 - *(deps)* Bump syn from 2.0.87 to 2.0.89
+- *(deps)* Bump tracing-subscriber from 0.3.18 to 0.3.19
+- *(deps)* Bump syn from 2.0.89 to 2.0.90
+- *(deps)* Bump tracing from 0.1.40 to 0.1.41
+- :arrow_up: Update dependencies
+- *(deps)* Bump poseidon/wait-for-status-checks from 0.5.0 to 0.6.0
 
 ## [0.2.10] - 2024-11-10
 
@@ -110,6 +148,30 @@ All notable changes to this project will be documented in this file.
 
 ### ⚙️ Miscellaneous Tasks
 
+- :green_heart: Full test
+- :green_heart: Ignore errors
+- :green_heart: Don't redirect
+- :green_heart: Use true
+- :green_heart: Redirect
+- :green_heart: Use all
+- :green_heart: Check for empty string
+- :green_heart: Remove semi
+- :green_heart: set +e
+- :green_heart: Just open pull request
+- :green_heart: Toggle PR
+- :green_heart: Trigger on ref
+- :green_heart: Fix command
+- :green_heart: Use head.sha
+- :green_heart: Try branch ref
+- :green_heart: Workflow then pull
+- :green_heart: Wait for ref
+- :bookmark: Release v0.2.4
+- :green_heart: Manual checks
+
+## [test] - 2024-08-29
+
+### ⚙️ Miscellaneous Tasks
+
 - :green_heart: Auto approve dependabot
 - :green_heart: Auto merge dependabot PRs
 - :wrench: Update configs for CI\CD
@@ -148,25 +210,6 @@ All notable changes to this project will be documented in this file.
 - :see_no_evil: Ignore folder
 - :green_heart: sh wait for merge
 - :wrench: Ignore typos
-- :green_heart: Full test
-- :green_heart: Ignore errors
-- :green_heart: Don't redirect
-- :green_heart: Use true
-- :green_heart: Redirect
-- :green_heart: Use all
-- :green_heart: Check for empty string
-- :green_heart: Remove semi
-- :green_heart: set +e
-- :green_heart: Just open pull request
-- :green_heart: Toggle PR
-- :green_heart: Trigger on ref
-- :green_heart: Fix command
-- :green_heart: Use head.sha
-- :green_heart: Try branch ref
-- :green_heart: Workflow then pull
-- :green_heart: Wait for ref
-- :bookmark: Release v0.2.4
-- :green_heart: Manual checks
 
 ### Build
 
