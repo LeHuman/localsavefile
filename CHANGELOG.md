@@ -6,6 +6,20 @@ All notable changes to this project will be documented in this file.
 
 ### ⚙️ Miscellaneous Tasks
 
+- :bookmark: Release v0.2.15
+
+### Build
+
+- *(deps)* Bump darling from 0.21.2 to 0.21.3
+
+## [0.2.14] - 2025-08-24
+
+### 📚 Documentation
+
+- :memo: Update CHANGELOG.md
+
+### ⚙️ Miscellaneous Tasks
+
 - :bookmark: Release v0.2.14
 
 ### Build
