@@ -6,6 +6,20 @@ All notable changes to this project will be documented in this file.
 
 ### ⚙️ Miscellaneous Tasks
 
+- :bookmark: Release v0.2.16
+
+### Build
+
+- *(deps)* Bump tracing-subscriber from 0.3.19 to 0.3.20
+
+## [0.2.15] - 2025-08-31
+
+### 📚 Documentation
+
+- :memo: Update CHANGELOG.md
+
+### ⚙️ Miscellaneous Tasks
+
 - :bookmark: Release v0.2.15
 
 ### Build
