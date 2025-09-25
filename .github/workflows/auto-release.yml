@@ -8,9 +8,35 @@ on:
   workflow_dispatch:
 permissions: write-all
 jobs:
+  check-changes:
+    name: Check for Changes
+    runs-on: ubuntu-latest
+    outputs:
+      has_changes: ${{ steps.check.outputs.has_changes }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          components: rustfmt, clippy
+      - uses: taiki-e/install-action@v2
+        with:
+          tool: cargo-workspaces
+      - name: Check for Changes
+        id: check
+        run: |
+          if cargo workspaces changed --error-on-empty; then
+            echo "has_changes=true" >> $GITHUB_OUTPUT
+          else
+            echo "has_changes=false" >> $GITHUB_OUTPUT
+          fi
   auto-release:
     name: Auto Release
     runs-on: ubuntu-latest
+    if: needs.check-changes.outputs.has_changes == 'true'
     steps:
       - name: GitHub Checks
         uses: poseidon/wait-for-status-checks@v0.6.0
@@ -30,15 +56,13 @@ jobs:
       - uses: taiki-e/install-action@v2
         with:
           tool: cargo-workspaces
-      - name: Check for Changes
-        run: cargo workspaces changed --error-on-empty
       - name: Check semver # IMPROVE: Bump version appropriately
         uses: obi1kenobi/cargo-semver-checks-action@v2.8
         with:
           rust-toolchain: manual
           exclude: localsavefile-test # IMPROVE: External list/config for crates to ignore in workspaces
       - name: Git Set User
-        run: |-
+        run: |
           git config user.name 'github-actions[bot]'
           git config user.email 'github-actions[bot]@users.noreply.github.com'
       - name: Bump Version
