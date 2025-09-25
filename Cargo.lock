@@ -258,9 +258,9 @@ checksum = "b9e0384b61958566e926dc50660321d12159025e767c18e043daf26b70104c39"
 
 [[package]]
 name = "indexmap"
-version = "2.7.1"
+version = "2.11.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "8c9c992b02b5b4c94ea26e32fe5bccb7aa7d9f390ab5c1221ff895bc7ea8b652"
+checksum = "4b0f83760fb341a774ed326568e19f5a863af4a952def8c39f9ab92fd95b88e5"
 dependencies = [
  "equivalent",
  "hashbrown",
@@ -541,9 +541,9 @@ dependencies = [
 
 [[package]]
 name = "savefile"
-version = "0.19.0"
+version = "0.20.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "efae543b0c35dafb640485acfae6db2c57da94a81393fb411c12f3d6c9084139"
+checksum = "d5d5a8c5f38fe9cdec2fb29d0d45f614eda2608bb1536f037ef31336f1ec6323"
 dependencies = [
  "arrayvec",
  "bit-set 0.5.3",
@@ -564,9 +564,9 @@ dependencies = [
 
 [[package]]
 name = "savefile-derive"
-version = "0.19.0"
+version = "0.20.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "1e0376f220a3427a88e084a1acd072f3d16a0246abd37114aa801d99ffb9bc1f"
+checksum = "6f6934119e6ae3f1838cbb28dfcec2089835dd51edfdb53e3bb80540b926b803"
 dependencies = [
  "proc-macro-error2",
  "proc-macro2",
