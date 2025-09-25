@@ -6,6 +6,24 @@ All notable changes to this project will be documented in this file.
 
 ### ⚙️ Miscellaneous Tasks
 
+- :construction_worker: Seperate check changes job
+- :green_heart: ref var on if
+- :bookmark: Release v0.2.17
+
+### Build
+
+- :arrow_up: Update savefile ver
+- *(deps)* Bump obi1kenobi/cargo-semver-checks-action from 2.6 to 2.8
+- *(deps)* Bump actions/checkout from 4 to 5
+
+## [0.2.16] - 2025-09-07
+
+### 📚 Documentation
+
+- :memo: Update CHANGELOG.md
+
+### ⚙️ Miscellaneous Tasks
+
 - :bookmark: Release v0.2.16
 
 ### Build
