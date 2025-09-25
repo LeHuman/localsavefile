@@ -36,7 +36,7 @@ jobs:
   auto-release:
     name: Auto Release
     runs-on: ubuntu-latest
-    if: needs.check-changes.outputs.has_changes == 'true'
+    if: ${{needs.check-changes.outputs.has_changes}} == 'true'
     steps:
       - name: GitHub Checks
         uses: poseidon/wait-for-status-checks@v0.6.0
