@@ -6,6 +6,16 @@ All notable changes to this project will be documented in this file.
 
 ### ⚙️ Miscellaneous Tasks
 
+- :bookmark: Release v0.2.18
+
+## [0.2.17] - 2025-09-25
+
+### 📚 Documentation
+
+- :memo: Update CHANGELOG.md
+
+### ⚙️ Miscellaneous Tasks
+
 - :construction_worker: Seperate check changes job
 - :green_heart: ref var on if
 - :bookmark: Release v0.2.17
