@@ -15,7 +15,7 @@ jobs:
       has_changes: ${{ steps.check.outputs.has_changes }}
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
         with:
           fetch-depth: 0
       - name: Install Rust toolchain
@@ -45,7 +45,7 @@ jobs:
           timeout: 500
           ignore: ${{ github.workflow }}
       - name: Checkout repository
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
         with:
           fetch-depth: 0
       - name: Install Rust toolchain
