@@ -57,7 +57,7 @@ jobs:
         with:
           tool: cargo-workspaces
       - name: Check semver # IMPROVE: Bump version appropriately
-        uses: obi1kenobi/cargo-semver-checks-action@v2.8
+        uses: obi1kenobi/cargo-semver-checks-action@v2.9
         with:
           rust-toolchain: manual
           exclude: localsavefile-test # IMPROVE: External list/config for crates to ignore in workspaces
