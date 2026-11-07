@@ -306,7 +306,7 @@ dependencies = [
 
 [[package]]
 name = "localsavefile"
-version = "0.2.19"
+version = "0.2.20"
 dependencies = [
  "directories",
  "localsavefile-derive",
@@ -317,7 +317,7 @@ dependencies = [
 
 [[package]]
 name = "localsavefile-derive"
-version = "0.2.19"
+version = "0.2.20"
 dependencies = [
  "darling",
  "proc-macro2",
@@ -328,7 +328,7 @@ dependencies = [
 
 [[package]]
 name = "localsavefile-test"
-version = "0.2.19"
+version = "0.2.20"
 dependencies = [
  "localsavefile",
  "savefile",

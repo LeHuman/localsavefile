@@ -2,7 +2,17 @@
 
 All notable changes to this project will be documented in this file.
 
+## [unreleased]
+
+### ⚙️ Miscellaneous Tasks
+
+- :bookmark: Release v0.2.20
+
 ## [0.2.19] - 2026-11-07
+
+### 📚 Documentation
+
+- :memo: Update CHANGELOG.md
 
 ### Build
 
@@ -259,30 +269,6 @@ All notable changes to this project will be documented in this file.
 
 ### ⚙️ Miscellaneous Tasks
 
-- :green_heart: Full test
-- :green_heart: Ignore errors
-- :green_heart: Don't redirect
-- :green_heart: Use true
-- :green_heart: Redirect
-- :green_heart: Use all
-- :green_heart: Check for empty string
-- :green_heart: Remove semi
-- :green_heart: set +e
-- :green_heart: Just open pull request
-- :green_heart: Toggle PR
-- :green_heart: Trigger on ref
-- :green_heart: Fix command
-- :green_heart: Use head.sha
-- :green_heart: Try branch ref
-- :green_heart: Workflow then pull
-- :green_heart: Wait for ref
-- :bookmark: Release v0.2.4
-- :green_heart: Manual checks
-
-## [test] - 2024-08-29
-
-### ⚙️ Miscellaneous Tasks
-
 - :green_heart: Auto approve dependabot
 - :green_heart: Auto merge dependabot PRs
 - :wrench: Update configs for CI\CD
@@ -321,6 +307,25 @@ All notable changes to this project will be documented in this file.
 - :see_no_evil: Ignore folder
 - :green_heart: sh wait for merge
 - :wrench: Ignore typos
+- :green_heart: Full test
+- :green_heart: Ignore errors
+- :green_heart: Don't redirect
+- :green_heart: Use true
+- :green_heart: Redirect
+- :green_heart: Use all
+- :green_heart: Check for empty string
+- :green_heart: Remove semi
+- :green_heart: set +e
+- :green_heart: Just open pull request
+- :green_heart: Toggle PR
+- :green_heart: Trigger on ref
+- :green_heart: Fix command
+- :green_heart: Use head.sha
+- :green_heart: Try branch ref
+- :green_heart: Workflow then pull
+- :green_heart: Wait for ref
+- :bookmark: Release v0.2.4
+- :green_heart: Manual checks
 
 ### Build
 
