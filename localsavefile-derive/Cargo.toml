@@ -1,7 +1,7 @@
 [package]
 name = "localsavefile-derive"
 authors = ["LeHuman"]
-version = "0.2.18"
+version = "0.2.19"
 edition = "2021"
 description = "Macro implementation for localsavefile"
 repository = "https://github.com/lehuman/localsavefile"
@@ -13,8 +13,8 @@ license = "MIT OR Apache-2.0"
 proc-macro = true
 
 [dependencies]
-quote = "1.0.44"
-syn = { version = "2.0.117", features = ["parsing"] }
-darling = "0.21.3"
+quote = "1.0.47"
+syn = { version = "3.0.9", features = ["parsing"] }
+darling = "0.24.1"
 sanitize-filename = "0.6.0"
-proc-macro2 = "1.0.106"
+proc-macro2 = "1.0.107"
