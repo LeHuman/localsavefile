@@ -3,19 +3,62 @@ on: pull_request
 permissions:
   contents: write
   pull-requests: write
+  issues: write
 jobs:
   dependabot:
     runs-on: ubuntu-latest
     if: github.event.pull_request.user.login == 'dependabot[bot]'
     steps:
+      - name: Checkout PR head
+        uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.pull_request.head.ref }}
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          components: clippy, rustfmt
+      - uses: Swatinem/rust-cache@v2
+      - name: Apply mechanical autofixes
+        run: |
+          cargo clippy --fix --allow-dirty --allow-no-vcs --all-features --workspace --all-targets || true
+          cargo fmt --all
+      - name: Push autofixes
+        id: fix
+        run: |
+          if git diff --quiet; then
+            echo "pushed=false" >> "$GITHUB_OUTPUT"
+          else
+            git config user.name 'github-actions[bot]'
+            git config user.email 'github-actions[bot]@users.noreply.github.com'
+            git commit -am "fix: :zap: Apply clippy and rustfmt autofixes"
+            git push
+            echo "pushed=true" >> "$GITHUB_OUTPUT"
+          fi
+      - name: Verify
+        run: |
+          cargo fmt --all --check
+          cargo clippy --all-features --all-targets --workspace -- -D warnings
+          cargo test --all-features --workspace
       - name: Dependabot metadata
         id: metadata
         uses: dependabot/fetch-metadata@v3
         with:
           github-token: "${{ secrets.GITHUB_TOKEN }}"
       - name: Enable auto-merge for Dependabot PRs
-        if: steps.metadata.outputs.update-type == 'version-update:semver-patch'
+        if: success() && steps.metadata.outputs.update-type == 'version-update:semver-patch'
         run: gh pr merge --auto --merge "$PR_URL"
         env:
           PR_URL: ${{github.event.pull_request.html_url}}
           GH_TOKEN: ${{secrets.GITHUB_TOKEN}}
+      - name: Open Copilot fix issue
+        if: failure()
+        run: |
+          gh issue create \
+            --title "Fix failing Dependabot PR #${{ github.event.pull_request.number }}" \
+            --body "Dependabot PR ${{ github.event.pull_request.html_url }} still fails after mechanical autofixes (clippy --fix + rustfmt).
+
+          Please attempt a bounded fix of the failure, then open a pull request. Failure logs: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+            --assignee Copilot || \
+          gh pr comment "${{ github.event.pull_request.number }}" --body "Mechanical autofixes were insufficient; manual fix needed. Logs: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
