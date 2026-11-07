@@ -2,7 +2,49 @@
 
 All notable changes to this project will be documented in this file.
 
-## [unreleased]
+## [0.2.19] - 2026-11-07
+
+### Build
+
+- *(deps)* Bump quote from 1.0.40 to 1.0.41
+- *(deps)* Bump syn from 2.0.106 to 2.0.107
+- *(deps)* Bump savefile from 0.20.1 to 0.20.2
+- *(deps)* Bump syn from 2.0.107 to 2.0.108
+- *(deps)* Bump proc-macro2 from 1.0.101 to 1.0.103
+- *(deps)* Bump syn from 2.0.108 to 2.0.110
+- *(deps)* Bump quote from 1.0.41 to 1.0.42
+- *(deps)* Bump syn from 2.0.110 to 2.0.111
+- *(deps)* Bump tracing-subscriber from 0.3.20 to 0.3.22
+- *(deps)* Bump tracing from 0.1.41 to 0.1.43
+- *(deps)* Bump tracing from 0.1.43 to 0.1.44
+- *(deps)* Bump proc-macro2 from 1.0.103 to 1.0.104
+- *(deps)* Bump syn from 2.0.111 to 2.0.113
+- *(deps)* Bump proc-macro2 from 1.0.104 to 1.0.105
+- *(deps)* Bump syn from 2.0.113 to 2.0.114
+- *(deps)* Bump quote from 1.0.42 to 1.0.43
+- *(deps)* Bump proc-macro2 from 1.0.105 to 1.0.106
+- *(deps)* Bump quote from 1.0.43 to 1.0.44
+- *(deps)* Bump syn from 2.0.114 to 2.0.116
+- *(deps)* Bump syn from 2.0.116 to 2.0.117
+- *(deps)* Bump tracing-subscriber from 0.3.22 to 0.3.23
+- *(deps)* Bump savefile from 0.20.2 to 0.20.4
+- *(deps)* Bump syn from 2.0.117 to 2.0.118
+- *(deps)* Bump quote from 1.0.44 to 1.0.46
+- *(deps)* Bump savefile from 0.20.4 to 0.20.5
+- *(deps)* Bump quote from 1.0.46 to 1.0.47
+- *(deps)* Bump proc-macro2 from 1.0.106 to 1.0.107
+- *(deps)* Bump taiki-e/install-action from 2 to 2.85.5
+- *(deps)* Bump poseidon/wait-for-status-checks from 0.6.0 to 0.7.0
+- *(deps)* Bump actions/checkout from 5 to 7
+- *(deps)* Bump dependabot/fetch-metadata from 2 to 3
+- *(deps)* Bump obi1kenobi/cargo-semver-checks-action from 2.8 to 2.9
+- *(deps)* :arrow_up: Update dependencies to latest
+
+## [0.2.18] - 2025-09-28
+
+### 📚 Documentation
+
+- :memo: Update CHANGELOG.md
 
 ### ⚙️ Miscellaneous Tasks
 
@@ -217,6 +259,30 @@ All notable changes to this project will be documented in this file.
 
 ### ⚙️ Miscellaneous Tasks
 
+- :green_heart: Full test
+- :green_heart: Ignore errors
+- :green_heart: Don't redirect
+- :green_heart: Use true
+- :green_heart: Redirect
+- :green_heart: Use all
+- :green_heart: Check for empty string
+- :green_heart: Remove semi
+- :green_heart: set +e
+- :green_heart: Just open pull request
+- :green_heart: Toggle PR
+- :green_heart: Trigger on ref
+- :green_heart: Fix command
+- :green_heart: Use head.sha
+- :green_heart: Try branch ref
+- :green_heart: Workflow then pull
+- :green_heart: Wait for ref
+- :bookmark: Release v0.2.4
+- :green_heart: Manual checks
+
+## [test] - 2024-08-29
+
+### ⚙️ Miscellaneous Tasks
+
 - :green_heart: Auto approve dependabot
 - :green_heart: Auto merge dependabot PRs
 - :wrench: Update configs for CI\CD
@@ -255,25 +321,6 @@ All notable changes to this project will be documented in this file.
 - :see_no_evil: Ignore folder
 - :green_heart: sh wait for merge
 - :wrench: Ignore typos
-- :green_heart: Full test
-- :green_heart: Ignore errors
-- :green_heart: Don't redirect
-- :green_heart: Use true
-- :green_heart: Redirect
-- :green_heart: Use all
-- :green_heart: Check for empty string
-- :green_heart: Remove semi
-- :green_heart: set +e
-- :green_heart: Just open pull request
-- :green_heart: Toggle PR
-- :green_heart: Trigger on ref
-- :green_heart: Fix command
-- :green_heart: Use head.sha
-- :green_heart: Try branch ref
-- :green_heart: Workflow then pull
-- :green_heart: Wait for ref
-- :bookmark: Release v0.2.4
-- :green_heart: Manual checks
 
 ### Build
 
