@@ -3,7 +3,6 @@ on: pull_request
 permissions:
   contents: write
   pull-requests: write
-  issues: write
 jobs:
   dependabot:
     runs-on: ubuntu-latest
@@ -50,15 +49,9 @@ jobs:
         env:
           PR_URL: ${{github.event.pull_request.html_url}}
           GH_TOKEN: ${{secrets.GITHUB_TOKEN}}
-      - name: Open Copilot fix issue
+      - name: Comment on failure
         if: failure()
         run: |
-          gh issue create \
-            --title "Fix failing Dependabot PR #${{ github.event.pull_request.number }}" \
-            --body "Dependabot PR ${{ github.event.pull_request.html_url }} still fails after mechanical autofixes (clippy --fix + rustfmt).
-
-          Please attempt a bounded fix of the failure, then open a pull request. Failure logs: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
-            --assignee Copilot || \
-          gh pr comment "${{ github.event.pull_request.number }}" --body "Mechanical autofixes were insufficient; manual fix needed. Logs: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+          gh pr comment "${{ github.event.pull_request.number }}" --body "Mechanical autofixes (clippy --fix + rustfmt) were insufficient; manual fix needed. Logs: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
