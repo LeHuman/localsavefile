@@ -6,6 +6,16 @@ All notable changes to this project will be documented in this file.
 
 ### ⚙️ Miscellaneous Tasks
 
+- :bookmark: Release v0.2.22
+
+## [0.2.21] - 2026-11-08
+
+### 📚 Documentation
+
+- :memo: Update CHANGELOG.md
+
+### ⚙️ Miscellaneous Tasks
+
 - :construction_worker: Change dependabot schedule from weekly to monthly
 - :construction_worker: Extend auto-merge with mechanical autofixes and Copilot bridge
 - :construction_worker: Drop Copilot bridge, comment on PR instead
